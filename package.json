@@ -1,0 +1,14 @@
+{
+  "name": "battle-game-bot",
+  "version": "0.0.1",
+  "description": "A WIP bot. Probably will get abandoned later but whatever",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "GTink911#1237",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.4.1"
+  }
+}
