@@ -1,0 +1,67 @@
+const damageresponses = [
+    "Wow, that was close, but your crew managed to dodge the enemies attacks!",	
+    "Despite your crew's best efforts, some light damage was taken!",
+    "WARNING: FIRE DETECTED IN VEHICLE.",
+    "WARNING: CONTACT WITH CREW LOST. CASUALTIES EXPECTED.",
+];
+
+const torpedoresponses = [
+	"Despite your crew's best efforts, the torpedo hit and did light damage!",
+	"Oh no - the torpedo hit and sensors are reporting light damage around the impact area!",
+	"The torpedo hit and a fire has started!",
+	"It was close, but with the data from your enhanced sensors the pilot of your vessel managed to dodge the torpedo!",
+	"WARNING: CONTACT WITH VESSEL LOST. COMMUNICATIONS OFFLINE. CASUALTIES EXPECTED.",
+];
+
+const depthchargeresponses = [
+	"Looks like all that training paid off - The depth charges hit and cause light damage to the enemy vessel!",
+	"With a boom, your depth charges explode, causing light damage to the enemy hull and systems!",
+	"Looks like you hit the jackpot - your depth charges cause some fuel to explode, light fires throughout their ship!",
+	"Despite your carefully guided depth charges, the enemies nimble ship managed to dodge the explosion. Don't worry - you'll get em next time!",
+	"With a final explosion, the enemy ship cracks apart and quickly sinks to the bottom of the ocean - they won't be coming back from that.'",
+];
+
+const fixfireresponses = [
+	"Quickly grabbing fire extinguishers, the crew luckily managed to quickly put out the fire.",
+	"With their disaster training in mind, your crew coordinates to quickly put out the flames.",
+	"The crew's fire extinguishers were not enough - the fire has spread and gotten a little worse!",
+	"Despite the crew's efforts, sensors are reporting the fire has gotten a little worse rather than better!",
+	"Oh no, the crew's fire extinguishers aren't enough and the fire has nearly spread to the fuel! (Much worse)",
+	"With a final explosion, the flames catch the fuel line. The vessel is no more.",
+	"WARNING: LARGE MUNITIONS EXPLOSION DETECTED AT VESSEL. CASUALTIES EXPECTED.",
+];
+
+
+
+
+
+
+module.exports = {
+	name: 'wheel',
+	description: 'Spins a wheel. Say the command without a argument to see all valid wheels.',
+	execute(message, args) {
+			if (!args.length) {
+		return message.channel.send(`You need to specify which wheel to spin ${message.author}! Valid wheels are:\nDamage\nTorpedo\nDepthCharge\nFixFire`);
+		}
+
+		else if (args[0] === 'damage') {
+			const damagerollresponse = damageresponses[Math.floor(Math.random() * damageresponses.length)];
+			message.channel.send(damagerollresponse);
+		}
+
+		else if (args[0] === 'torpedo') {
+			const torpedorollresponse = torpedoresponses[Math.floor(Math.random() * torpedoresponses.length)];
+			message.channel.send(torpedorollresponse);
+		}
+
+		else if (args[0] === 'depthcharge') {
+			const depthchargerollresponse = depthchargeresponses[Math.floor(Math.random() * depthchargeresponses.length)];
+			message.channel.send(depthchargerollresponse);
+		}
+		else if (args[0] === 'fixfire') {
+			const fixfirerollresponse = fixfireresponses[Math.floor(Math.random() * fixfireresponses.length)];
+			message.channel.send(fixfirerollresponse);
+		}
+
+	},
+};
