@@ -31,20 +31,39 @@ const fixfireresponses = [
 	"WARNING: LARGE MUNITIONS EXPLOSION DETECTED AT VESSEL. CASUALTIES EXPECTED.",
 ];
 
+const attackdamageresponses = [
+	"Sensing your attack, the enemy swiftly evades.",
+	"The enemy vessel took light damage, but much of your attack missed.",
+	"Your weapons managed to light a fire in their vessel!",
+	"The enemy vessel took a lot of damage - you bet it will collapse under another hit!",
+	"The enemy vessel explodes - you doubt anyone could survive that!",
+];
 
+const rocketdamageresponses = [
+	"By confusing the enemy defenses, your rocket manages to hit and successfully lights several fires!",
+	"By confusing the enemy defenses, your rocket manages to hit and successfully lights several fires!",
+	"The rocket managed to deal light damage to the enemy!",
+	"Swiftly priming their anti-rocket defenses, your rocket is immediately shot down before it could deal any damage!",
+	"The rocket impacts their power grid, quickly cutting off all essential systems. They'll be dead in hours.",
+];
 
-
-
+const bombdamageresponses = [
+	"The explosion dealt light damage to the enemy!",
+	"The explosion dealt light damage to the enemy!",
+	"The enemy vessel took heavy damage, nearly breaking through their hull!",
+	"The bomb caught a fuel line, and lit a sizable fire!",
+	"The bombs placement was true - the explosion catches the fuel line, and the vessel is swiftly destroyed.",
+];
 
 module.exports = {
 	name: 'wheel',
 	description: 'Spins a wheel. Say the command without a argument to see all valid wheels.',
 	execute(message, args) {
 			if (!args.length) {
-		return message.channel.send(`You need to specify which wheel to spin ${message.author}! Valid wheels are:\nDamage\nTorpedo\nDepthCharge\nFixFire`);
+		return message.channel.send(`You need to specify which wheel to spin ${message.author}! Valid wheels are:\nIncomingDamage\nTorpedo\nDepthCharge\nFixFire\nAttackDamage\nRocketDamage\nBombDamage`);
 		}
 
-		else if (args[0] === 'damage') {
+		else if (args[0] === 'incomingdamage') {
 			const damagerollresponse = damageresponses[Math.floor(Math.random() * damageresponses.length)];
 			message.channel.send(damagerollresponse);
 		}
@@ -62,6 +81,17 @@ module.exports = {
 			const fixfirerollresponse = fixfireresponses[Math.floor(Math.random() * fixfireresponses.length)];
 			message.channel.send(fixfirerollresponse);
 		}
-
+		else if (args[0] === 'attackdamage') {
+			const attackdamagerollresponse = attackdamageresponses[Math.floor(Math.random() * attackdamageresponses.length)];
+			message.channel.send(attackdamagerollresponse);
+		}
+		else if (args[0] === 'rocketdamage') {
+			const rocketdamagerollresponse = rocketdamageresponses[Math.floor(Math.random() * rocketdamageresponses.length)];
+			message.channel.send(rocketdamagerollresponse);
+		}		
+		else if (args[0] === 'bombdamage') {
+			const bombdamagerollresponse = bombdamageresponses[Math.floor(Math.random() * bombdamageresponses.length)];
+			message.channel.send(bombdamagerollresponse);
+		}
 	},
 };
