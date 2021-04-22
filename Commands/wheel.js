@@ -55,12 +55,27 @@ const bombdamageresponses = [
 	"The bombs placement was true - the explosion catches the fuel line, and the vessel is swiftly destroyed.",
 ];
 
+const eraresponses = [
+	"The chosen Era is Cold War!",
+	"The chosen Era is present!",
+	"The chosen Era is World War II!",
+	"The chosen Era is World War I!",
+];
+
+const locationresponses = [
+	"The chosen type of battle is Water Only!",
+	"The chosen type of battle is Air Only!",
+	"The chosen type of battle is Land Only!",
+	"The chosen type of battle is All Types (Land, Air, etc.)!",
+	"The chosen type of battle is Nuclear Only! If the battle is in a Era in which nuclear weapons aren't available, reroll this wheel.",
+];
+
 module.exports = {
 	name: 'wheel',
 	description: 'Spins a wheel. Say the command without a argument to see all valid wheels.',
-	execute(message, args) {
+	async execute(message, args) {
 			if (!args.length) {
-		return message.channel.send(`You need to specify which wheel to spin ${message.author}! Valid wheels are:\nIncomingDamage\nTorpedo\nDepthCharge\nFixFire\nAttackDamage\nRocketDamage\nBombDamage`);
+		return message.channel.send(`You need to specify which wheel to spin ${message.author}! Valid wheels are:\nIncomingDamage\nTorpedo\nDepthCharge\nFixFire\nAttackDamage\nRocketDamage\nBombDamage\nEra\nType`);
 		}
 
 		else if (args[0] === 'incomingdamage') {
@@ -92,6 +107,14 @@ module.exports = {
 		else if (args[0] === 'bombdamage') {
 			const bombdamagerollresponse = bombdamageresponses[Math.floor(Math.random() * bombdamageresponses.length)];
 			message.channel.send(bombdamagerollresponse);
+		}
+		else if (args[0] === 'era') {
+			const erarollresponse = eraresponses[Math.floor(Math.random() * eraresponses.length)];
+			message.channel.send(erarollresponse);
+		}
+		else if (args[0] === 'type') {
+			const locationrollresponse = locationresponses[Math.floor(Math.random() * locationresponses.length)];
+			message.channel.send(locationrollresponse);
 		}
 	},
 };

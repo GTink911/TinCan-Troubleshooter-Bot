@@ -1,7 +1,7 @@
 module.exports = {
 	name: 'Name',
 	description: 'Description',
-	async execute(message, args) {
+	async execute(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3) {
 		// ...
 	},
 };
