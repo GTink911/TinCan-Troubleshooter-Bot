@@ -53,15 +53,14 @@ client.on('message', async message => {
 			vibemessagecounter++
 			onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
 		}
-	}
-
-	if (message.content.includes('murica') && message.channel.id === ('783389789591437333')) {
-		if (message.author.bot) return;
-		message.channel.send(`https://giphy.com/gifs/freedom-murica-UGGGGjJUsvx84`)
-		onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
+	} else if (message.content.includes('murica') && message.channel.id === ('783389789591437333')) {
+		if (message.author.bot) {
+			return;
+		} else {
+			message.channel.send(`https://giphy.com/gifs/freedom-murica-UGGGGjJUsvx84`)
+			onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
+		}
 	} else onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
-
-	onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
 
 });
 
