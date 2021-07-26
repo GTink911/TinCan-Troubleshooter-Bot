@@ -25,19 +25,24 @@ client.once('ready', () => {
 const exampleEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
 	.setTitle('Looks like its time to play another game of... \n***Troubleshooting Mania!***')
-	.setAuthor('testauthor', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-	.setDescription('Some description here')
-	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+	.setAuthor('Check out my GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+	.setDescription('Thanks for playing! What system are you having troubles with, my lad/ladess?')
 	.addFields(
-		{ name: 'Regular field title', value: 'Some value here' },
-		{ name: '\u200B', value: '\u200B' },
-		{ name: 'Inline field title', value: 'Some value here', inline: true },
-		{ name: 'Inline field title', value: 'Some value here', inline: true },
+		{ name: 'Main Generator', value: 'React with :regional_indicator_a:!', inline: true },
+		{ name: 'Main Computer', value: 'React with :regional_indicator_b:!', inline: true },
+		{ name: 'Rescue Beacon', value: 'React with :regional_indicator_c:!', inline: true },
+		{ name: 'CO2 Scrubber', value: 'React with :regional_indicator_d:!', inline: true },
+		{ name: 'CO2 to O2 Station', value: 'React with :regional_indicator_e:!', inline: true },
+		{ name: 'Lighting Systems', value: 'React with :regional_indicator_f:!', inline: true },
+		{ name: 'Battery Charger', value: 'React with :regional_indicator_g:!', inline: true },
+		{ name: 'Gravity Generator', value: 'React with :regional_indicator_h:!', inline: true },
+		{ name: 'O2 Generator', value: 'React with :regional_indicator_i:!', inline: true },
+		{ name: 'Pressure Stabilizer', value: 'React with :regional_indicator_j:!', inline: true },
+		{ name: 'Repair Station', value: 'React with :regional_indicator_k:!', inline: true },
+		{ name: 'Temperature Manager', value: 'React with :regional_indicator_l:!', inline: true },
 	)
-	.addField('Inline field title', 'Some value here', true)
-	.setImage('https://i.imgur.com/wSTFkRM.png')
 	.setTimestamp()
-	.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+	.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
 // end test
 
