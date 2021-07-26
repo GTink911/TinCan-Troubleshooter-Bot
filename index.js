@@ -1,17 +1,10 @@
-/*
-	Master TODO List:
-	Finish specialized logging and edit WIP startgame message
-	Group dev commands under devtoolkit, w/ emergency backup code in event locked out
-	addvar and addconst commands
-
-	Master Note List: Due to stupid reason in the name category you can't have capitals or it screws everything up
-*/
+// NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
+// NOTE: Due to stupid reason in the name category you can't have capitals or it screws everything up
 
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('./config.json');
 const client = new Discord.Client();
-var vibemessagecounter = 0
 client.commands = new Discord.Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -21,64 +14,52 @@ for (const file of commandFiles) {
 	// with the key as the command name and the value as the exported module
 	client.commands.set(command.name, command);
 }
-const inprogressgames = [
-];
 
 client.once('ready', () => {
 	console.log('Ready!');
-	client.user.setActivity("Online and ready to play Memes and War!")
+	client.user.setActivity("Online and ready to help you troubleshoot - !troubleshoot :)")
 });
+
+//everything here is just testing
+
+const exampleEmbed = new Discord.MessageEmbed()
+	.setColor('#0099ff')
+	.setTitle('Looks like its time to play another game of... \n***Troubleshooting Mania!***')
+	.setAuthor('testauthor', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+	.setDescription('Some description here')
+	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+	.addFields(
+		{ name: 'Regular field title', value: 'Some value here' },
+		{ name: '\u200B', value: '\u200B' },
+		{ name: 'Inline field title', value: 'Some value here', inline: true },
+		{ name: 'Inline field title', value: 'Some value here', inline: true },
+	)
+	.addField('Inline field title', 'Some value here', true)
+	.setImage('https://i.imgur.com/wSTFkRM.png')
+	.setTimestamp()
+	.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+
+// end test
 
 client.on('message', async message => {
 
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
-	var devtoolkitarg = args[0]
-	var devtoolkitarg2 = args[1]
-	var devtoolkitarg3 = args[2]
 	const command = client.commands.get(commandName)
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	
 	if (!command) return;
 
-
-
-
-	if (message.author.id === '773969763076538380') {
-		if (vibemessagecounter === 10) {
-			vibemessagecounter = 0
-			message.reply(`fuck you`);
-			onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
-		} else {
-			vibemessagecounter++
-			onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
-		}
-	} else if (message.content.includes('murica') && message.channel.id === ('783389789591437333')) {
-		if (message.author.bot) {
-			return;
-		} else {
-			message.channel.send(`https://giphy.com/gifs/freedom-murica-UGGGGjJUsvx84`)
-			onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
-		}
-	} else onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command);
-
+	await command.execute(message, args, client, config, exampleEmbed)
 });
 
-async function onMessage(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3, command) {
-	await command.execute(message, args, client, inprogressgames, config, devtoolkitarg, devtoolkitarg2, devtoolkitarg3);
-}
+// If anyone can figure out how to get the below to send a message when it breaks, I'd appreciate it.
 client.on("error", (e) => {
 	console.error(e);
-	if(message.author.id === '390674838408134659'){
-		message.channel.send('Uh oh GT - I had a error! Diagnostics data has been outputted to console.');
-		return;
-	} else {
-		message.channel.send('Oh no D:\n Looks like I had a error! Luckily I can keep functioning, but please dm GTink911#1237 about this!');
-		return;
-	};
+	return;
 });
 
 client.on("warn", (e) => console.warn(e));
-//client.on("debug", (e) => console.info(e));
+// client.on("debug", (e) => console.info(e));
 
 client.login(config.token);

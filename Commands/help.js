@@ -1,3 +1,5 @@
+// As you might be able to guess, I'm clueless about what this code does. I'm a copy paster, not a new code writer! All I know is that it works :)
+
 const { prefix } = require('../config.json');
 
 module.exports = {
@@ -6,7 +8,7 @@ module.exports = {
 	aliases: ['commands'],
 	usage: '[command name]',
 	cooldown: 5,
-	execute(message, args) {
+	execute(message, args, client, config) {
 		const data = [];
 		const { commands } = message.client;
 

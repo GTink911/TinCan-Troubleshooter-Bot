@@ -1,8 +1,7 @@
 module.exports = {
 	name: 'reload',
 	description: 'Reloads a command',
-	args: true,
-	execute(message, args) {
+	execute(message, args, client, config) {
 		if(message.author.id === '390674838408134659'){
 			const commandName = args[0].toLowerCase();
 			const command = message.client.commands.get(commandName)

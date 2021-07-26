@@ -1,14 +1,14 @@
 {
-  "name": "battle-bot",
+  "name": "troubleshooter-bot",
   "version": "0.0.1",
-  "description": "Battle Bot recode edition",
+  "description": "Tin Can troubleshooter bot",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "github.com/GTink911/discordbattlebot/recode"
+    "url": "https://github.com/GTink911/TinCan-Troubleshooter-Bot"
   },
   "author": "GTink911#1237",
   "license": "ISC",
