@@ -1,4 +1,6 @@
-﻿module.exports = {
+﻿let StarterEmbedResponse = 'DEBUG'
+
+module.exports = {
 	name: 'troubleshoot',
 	description: 'Start troublehooting a problem in your Tin Can!',
 	execute(message, args, client, config, Discord) {
@@ -27,16 +29,18 @@
 			.setTimestamp()
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
+		// still need to find the failure states for this, TODO urgently
+
 		const ProblemEmbed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
-			.setTitle('Got it - now tell me, whats your issue?')
-			.setAuthor('Check out my GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Thanks for playing! What system are you having troubles with, my lad/ladess?')
+			.setTitle('Got it - now tell me, what\'s your issue?')
+			.setAuthor('Missing a problem? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('What problem are you having with the system?')
 			.addFields(
-				{ name: 'Main Generator', value: 'React with :regional_indicator_a:!', inline: true },
-				{ name: 'Main Computer', value: 'React with :regional_indicator_b:!', inline: true },
-				{ name: 'Rescue Beacon', value: 'React with :regional_indicator_c:!', inline: true },
-				{ name: 'CO2 Scrubber', value: 'React with :regional_indicator_d:!', inline: true },
+				{ name: 'The switch is on, but the system does not have power!', value: 'React with :regional_indicator_a:!', inline: true },
+				{ name: 'The switch is off, and it disables itself immediately after clicked!', value: 'React with :regional_indicator_b:!', inline: true },
+				{ name: 'The system has power, but the system is not functioning!', value: 'React with :regional_indicator_c:!', inline: true },
+				{ name: 'The system has power, but is functioning incorrectly!', value: 'React with :regional_indicator_d:!', inline: true },
 				{ name: 'CO2 to O2 Station', value: 'React with :regional_indicator_e:!', inline: true },
 				{ name: 'Lighting Systems', value: 'React with :regional_indicator_f:!', inline: true },
 				{ name: 'Battery Charger', value: 'React with :regional_indicator_g:!', inline: true },
@@ -55,9 +59,9 @@
 			.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 			.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot) :)')
 			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+			.setFooter('The details of this issue have automatically been logged. However, it would still be helpful if you submit a bug report.')
 
-		// Sending the starting embeds
+		// Sending the starting embed
 
 		StartTroubleshoot();
 
@@ -84,10 +88,6 @@
 
 				const collector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
 
-				collector.on('collect', (reaction, user) => {
-					console.log(`DEBUG - REACTION COLLECTED`);
-				});
-
 				collector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
@@ -99,34 +99,71 @@
 						// WARNING: HUGE IF/ELSE CHAIN INCOMING. EXPERIENCED PROGRAMMERS MAY HAVE THEIR EYES BLEED.
 
 						if (response === '🇦') {
-							message.channel.send(YouBrokeTheBot);
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: A')
+							StarterEmbedResponse = 'A'
+							return WhatIsProblem();
 						} else if (response === '🇧') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: B')
+							StarterEmbedResponse = 'B'
+							return WhatIsProblem();
 						} else if (response === '🇨') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: C')
+							StarterEmbedResponse = 'C'
+							return WhatIsProblem();
 						} else if (response === '🇩') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: D')
+							StarterEmbedResponse = 'D'
+							return WhatIsProblem();
 						} else if (response === '🇪') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: E')
+							StarterEmbedResponse = 'E'
+							return WhatIsProblem();
 						} else if (response === '🇫') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: F')
+							StarterEmbedResponse = 'F'
+							return WhatIsProblem();
 						} else if (response === '🇬') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: G')
+							StarterEmbedResponse = 'G'
+							return WhatIsProblem();
 						} else if (response === '🇭') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: H')
+							StarterEmbedResponse = 'H'
+							return WhatIsProblem();
 						} else if (response === '🇮') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: I')
+							StarterEmbedResponse = 'I'
+							return WhatIsProblem();
 						} else if (response === '🇯') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: J')
+							StarterEmbedResponse = 'J'
+							return WhatIsProblem();
 						} else if (response === '🇰') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: K')
+							StarterEmbedResponse = 'K'
+							return WhatIsProblem();
 						} else if (response === '🇱') {
-							message.channel.send('Thanks for testing, this is the end of the bot (For now!). Your response: L')
-						}
+							StarterEmbedResponse = 'L'
+							return WhatIsProblem();
+						} else YouBrokeTheBotFunct();
                     }
 				});
 			});
 		}
+
+		function WhatIsProblem() {
+			console.log('StarterEmbedResponse: ' + StarterEmbedResponse);
+
+			if (StarterEmbedResponse === 'DEBUG') YouBrokeTheBotFunct()
+
+			message.channel.send(ProblemEmbed).then(async sentMessage => {
+				await sentMessage.react('🇦')
+				await sentMessage.react('🇧')
+				await sentMessage.react('🇨')
+				await sentMessage.react('🇩')
+				await sentMessage.react('🇪')
+				await sentMessage.react('🇫')
+				await sentMessage.react('🇬')
+				await sentMessage.react('🇭')
+				await sentMessage.react('🇮')
+				await sentMessage.react('🇯')
+				await sentMessage.react('🇰')
+				await sentMessage.react('🇱')
+			});
+		}
+
+		function YouBrokeTheBotFunct() {
+			message.channel.send(YouBrokeTheBot)
+			console.error('A major error occurred. Available details have been logged below./nStarterEmbedResponse: ' + StarterEmbedResponse, '/nResponse: ' + Response, '/nArrayOfCollected: ' + collected.array(), '/nIf all three of the above do not match. something has gone terribly, terribly wrong.')
+        }
 	},
 };

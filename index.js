@@ -38,7 +38,10 @@ client.on("error", (e) => {
 	return;
 });
 
-client.on("warn", (e) => console.warn(e));
+client.on("warn", (e) => {
+	console.warn(e);
+	return;
+});
 // client.on("debug", (e) => console.info(e));
 
 client.login(config.token);
