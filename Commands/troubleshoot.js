@@ -13,7 +13,7 @@ module.exports = {
 		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
 
 		const StarterEmbed = new Discord.MessageEmbed()
-			.setColor('#0099ff')
+			.setColor('#5865F2')
 			.setTitle('Looks like its time to play another game of... \n***Troubleshooting Mania!***')
 			.setAuthor('Check out my GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 			.setDescription('Thanks for playing! What system are you having troubles with, my lad/ladess?')
@@ -37,7 +37,7 @@ module.exports = {
 		// still need to find the failure states for this, TODO urgently
 
 		const ProblemEmbed = new Discord.MessageEmbed()
-			.setColor('#0099ff')
+			.setColor('#5865F2')
 			.setTitle('Got it - now tell me, what\'s your issue?')
 			.setAuthor('List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 			.setDescription('What problem are you having with the system?')
@@ -51,7 +51,6 @@ module.exports = {
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
 		const YouBrokeTheBot = new Discord.MessageEmbed()
-			.setColor('#0099ff')
 			.setTitle('Great job, you broke the bot!')
 			.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 			.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot) :)')
@@ -183,24 +182,112 @@ module.exports = {
 			console.log('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
 
 			// From my understanding this statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
+			// Also, is it better performance-wise to eat the extra lines and add a break to the end of these?
 
+			// TODO: move all impossibles into default
+			// Remember to swap out power connector for power supply to prevent confusion
+			// Forgot data connector testing, should check that later
+
+			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it
 			switch (StarterResponsePlaintext + '|' +ProblemResponsePlaintext) {
 				case 'A|A':
 					console.log('power connector damaged')
 				case 'A|B':
 					console.log('damaged fuse, damaged switch')
 				case 'A|C':
-					console.log('DEBUG: A, C')
+					console.log('impossible')
 				case 'A|D':
-					console.log('damaged data connector, damaged processor')
+					console.log('damaged processor')
 				case 'B|A':
 					console.log('power connector, power transformer, fuse, switch')
 				case 'B|B':
 					console.log('impossible')
 				case 'B|C':
-					console.log('data connector')
+					console.log('')
 				case 'B|D':
-					console.log('processors, maybe file under B|C?')
+					console.log('processor')
+				case 'C|A':
+					console.log('')
+				case 'C|B':
+					console.log('')
+				case 'C|C':
+					console.log('')
+				case 'C|D':
+					console.log('')
+				case 'D|A':
+					console.log('transformer, power connector')
+				case 'D|B':
+					console.log('switch, fuse')
+				case 'D|C':
+					console.log('pump, filter')
+				case 'D|D':
+					console.log('impossible')
+				case 'E|A':
+					console.log('transformer, connector')
+				case 'E|B':
+					console.log('switch, fuse')
+				case 'E|C':
+					console.log('pump')
+				case 'E|D':
+					console.log('impossible')
+				case 'F|A':
+					console.log('transformer, power connector')
+				case 'F|B':
+					console.log('switch, fuse')
+				case 'F|C':
+					console.log('impossible')
+				case 'F|D':
+					console.log('impossible')
+				case 'G|A':
+					console.log('impossible')
+				case 'G|B':
+					console.log('fuse')
+				case 'G|C':
+					console.log('transformer, power connector, battery')
+				case 'G|D':
+					console.log('impossible')
+				case 'H|A':
+					console.log('power connector, transformer')
+				case 'H|B':
+					console.log('fuse, switch')
+				case 'H|C':
+					console.log('impossible')
+				case 'H|D':
+					console.log('impossible')
+				case 'I|A':
+					console.log('power connector, transformer')
+				case 'I|B':
+					console.log('switch, fuse')
+				case 'I|C':
+					console.log('pump')
+				case 'I|D':
+					console.log('impossible')
+				case 'J|A':
+					console.log('transformer, power connector')
+				case 'J|B':
+					console.log('switch, fuse')
+				case 'J|C':
+					console.log('pump, filter')
+				case 'J|D':
+					console.log('impossible')
+				case 'K|A':
+					console.log('')
+				case 'K|B':
+					console.log('')
+				case 'K|C':
+					console.log('')
+				case 'K|D':
+					console.log('')
+				case 'L|A':
+					console.log('')
+				case 'L|B':
+					console.log('')
+				case 'L|C':
+					console.log('')
+				case 'L|D':
+					console.log('')
+				default:
+					console.log('DEBUG: Default triggered.')
             }
         }
 
