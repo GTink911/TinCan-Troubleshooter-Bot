@@ -1,9 +1,14 @@
-﻿let StarterEmbedResponse = 'DEBUG'
+﻿var StarterResponsePlaintext = 'DEBUG'
+
 
 module.exports = {
 	name: 'troubleshoot',
 	description: 'Start troublehooting a problem in your Tin Can!',
 	execute(message, args, client, config, Discord) {
+
+		const filter = (reaction, user) => {
+			return ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱',].includes(reaction.emoji.name) && user.id === message.author.id;
+		};
 
 		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
 
@@ -34,21 +39,13 @@ module.exports = {
 		const ProblemEmbed = new Discord.MessageEmbed()
 			.setColor('#0099ff')
 			.setTitle('Got it - now tell me, what\'s your issue?')
-			.setAuthor('Missing a problem? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setAuthor('List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 			.setDescription('What problem are you having with the system?')
 			.addFields(
-				{ name: 'The switch is on, but the system does not have power!', value: 'React with :regional_indicator_a:!', inline: true },
-				{ name: 'The switch is off, and it disables itself immediately after clicked!', value: 'React with :regional_indicator_b:!', inline: true },
-				{ name: 'The system has power, but the system is not functioning!', value: 'React with :regional_indicator_c:!', inline: true },
-				{ name: 'The system has power, but is functioning incorrectly!', value: 'React with :regional_indicator_d:!', inline: true },
-				{ name: 'CO2 to O2 Station', value: 'React with :regional_indicator_e:!', inline: true },
-				{ name: 'Lighting Systems', value: 'React with :regional_indicator_f:!', inline: true },
-				{ name: 'Battery Charger', value: 'React with :regional_indicator_g:!', inline: true },
-				{ name: 'Gravity Generator', value: 'React with :regional_indicator_h:!', inline: true },
-				{ name: 'O2 Generator', value: 'React with :regional_indicator_i:!', inline: true },
-				{ name: 'Pressure Stabilizer', value: 'React with :regional_indicator_j:!', inline: true },
-				{ name: 'Repair Station', value: 'React with :regional_indicator_k:!', inline: true },
-				{ name: 'Temperature Manager', value: 'React with :regional_indicator_l:!', inline: true },
+				{ name: 'The switch is on, but the system does not have power!', value: 'React with :regional_indicator_a:!', inline: false },
+				{ name: 'The switch is off, and it disables itself immediately after clicked!', value: 'React with :regional_indicator_b:!', inline: false },
+				{ name: 'The system has power, but the system is not functioning or data is replaced with boxes!', value: 'React with :regional_indicator_c:!', inline: false },
+				{ name: 'The system has power, but is functioning incorrectly!', value: 'React with :regional_indicator_d:!', inline: false },
 			)
 			.setTimestamp()
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
@@ -68,6 +65,8 @@ module.exports = {
 		function StartTroubleshoot() {
 			message.channel.send(StarterEmbed).then(async sentMessage => {
 
+				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
+
 				await sentMessage.channel.send('Unfortunately, I\'m not sure how to let you react before they\'re done without also breaking the reaction order. I\'m (probably) working on a fix but until then you\'ll just have to wait. Sorry!')
 				await sentMessage.react('🇦')
 				await sentMessage.react('🇧')
@@ -82,13 +81,7 @@ module.exports = {
 				await sentMessage.react('🇰')
 				await sentMessage.react('🇱')
 
-				const filter = (reaction, user) => {
-					return ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱',].includes(reaction.emoji.name) && user.id === message.author.id;
-				};
-
-				const collector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
-
-				collector.on('end', (collected, reason) => {
+				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					} else {
@@ -96,74 +89,127 @@ module.exports = {
 
 						const response = userReaction._emoji.name;
 
-						// WARNING: HUGE IF/ELSE CHAIN INCOMING. EXPERIENCED PROGRAMMERS MAY HAVE THEIR EYES BLEED.
+						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down a lot of code
 
-						if (response === '🇦') {
-							StarterEmbedResponse = 'A'
-							return WhatIsProblem();
-						} else if (response === '🇧') {
-							StarterEmbedResponse = 'B'
-							return WhatIsProblem();
-						} else if (response === '🇨') {
-							StarterEmbedResponse = 'C'
-							return WhatIsProblem();
-						} else if (response === '🇩') {
-							StarterEmbedResponse = 'D'
-							return WhatIsProblem();
-						} else if (response === '🇪') {
-							StarterEmbedResponse = 'E'
-							return WhatIsProblem();
-						} else if (response === '🇫') {
-							StarterEmbedResponse = 'F'
-							return WhatIsProblem();
-						} else if (response === '🇬') {
-							StarterEmbedResponse = 'G'
-							return WhatIsProblem();
-						} else if (response === '🇭') {
-							StarterEmbedResponse = 'H'
-							return WhatIsProblem();
-						} else if (response === '🇮') {
-							StarterEmbedResponse = 'I'
-							return WhatIsProblem();
-						} else if (response === '🇯') {
-							StarterEmbedResponse = 'J'
-							return WhatIsProblem();
-						} else if (response === '🇰') {
-							StarterEmbedResponse = 'K'
-							return WhatIsProblem();
-						} else if (response === '🇱') {
-							StarterEmbedResponse = 'L'
-							return WhatIsProblem();
-						} else YouBrokeTheBotFunct();
+						switch (response) {
+							case '🇦':
+								StarterResponsePlaintext = 'A'
+								return WhatIsProblem();
+							case '🇧':
+								StarterResponsePlaintext = 'B'
+								return WhatIsProblem();
+							case '🇨':
+								StarterResponsePlaintext = 'C'
+								return WhatIsProblem();
+							case '🇩':
+								StarterResponsePlaintext = 'D'
+								return WhatIsProblem();
+							case '🇪':
+								StarterResponsePlaintext = 'E'
+								return WhatIsProblem();
+							case '🇫':
+								StarterResponsePlaintext = 'F'
+								return WhatIsProblem();
+							case '🇬':
+								StarterResponsePlaintext = 'G'
+								return WhatIsProblem();
+							case '🇭':
+								StarterResponsePlaintext = 'H'
+								return WhatIsProblem();
+							case '🇮':
+								StarterResponsePlaintext = 'I'
+								return WhatIsProblem();
+							case '🇯':
+								StarterResponsePlaintext = 'J'
+								return WhatIsProblem();
+							case '🇰':
+								StarterResponsePlaintext = 'K'
+								return WhatIsProblem();
+							case '🇱':
+								StarterResponsePlaintext = 'L'
+								return WhatIsProblem();
+							default:
+								message.channel.send(YouBrokeTheBotFunct)
+						}
                     }
 				});
 			});
 		}
 
 		function WhatIsProblem() {
-			console.log('StarterEmbedResponse: ' + StarterEmbedResponse);
+			console.log('StarterResponsePlaintext: ' + StarterResponsePlaintext);
 
-			if (StarterEmbedResponse === 'DEBUG') YouBrokeTheBotFunct()
+			if (StarterResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
 
 			message.channel.send(ProblemEmbed).then(async sentMessage => {
 				await sentMessage.react('🇦')
 				await sentMessage.react('🇧')
 				await sentMessage.react('🇨')
 				await sentMessage.react('🇩')
-				await sentMessage.react('🇪')
-				await sentMessage.react('🇫')
-				await sentMessage.react('🇬')
-				await sentMessage.react('🇭')
-				await sentMessage.react('🇮')
-				await sentMessage.react('🇯')
-				await sentMessage.react('🇰')
-				await sentMessage.react('🇱')
+				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
+
+				ReactionCollector.on('end', (collected, reason) => {
+					if (reason === 'time') {
+						sentMessage.channel.send('Uh oh- you timed out!')
+					} else {
+						const userReaction = collected.array()[0];
+
+						const response = userReaction._emoji.name;
+
+						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down a lot of code
+
+						switch (response) {
+							case '🇦':
+								ProblemResponsePlaintext = 'A'
+								return FindProblem();
+							case '🇧':
+								ProblemResponsePlaintext = 'B'
+								return FindProblem();
+							case '🇨':
+								ProblemResponsePlaintext = 'C'
+								return FindProblem();
+							case '🇩':
+								ProblemResponsePlaintext = 'D'
+								return FindProblem();
+							default:
+								YouBrokeTheBotFunct();
+						}
+					}
+				});
 			});
 		}
 
+		function FindProblem() {
+			console.log('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
+
+			// From my understanding this statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
+
+			switch (StarterResponsePlaintext + '|' +ProblemResponsePlaintext) {
+				case 'A|A':
+					console.log('power connector damaged')
+				case 'A|B':
+					console.log('damaged fuse, damaged switch')
+				case 'A|C':
+					console.log('DEBUG: A, C')
+				case 'A|D':
+					console.log('damaged data connector, damaged processor')
+				case 'B|A':
+					console.log('power connector, power transformer, fuse, switch')
+				case 'B|B':
+					console.log('impossible')
+				case 'B|C':
+					console.log('data connector')
+				case 'B|D':
+					console.log('processors, maybe file under B|C?')
+            }
+        }
+
 		function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
-			console.error('A major error occurred. Available details have been logged below./nStarterEmbedResponse: ' + StarterEmbedResponse, '/nResponse: ' + Response, '/nArrayOfCollected: ' + collected.array(), '/nIf all three of the above do not match. something has gone terribly, terribly wrong.')
-        }
-	},
-};
+			console.error('A major error occurred. Available details have been logged below.');
+			console.error('StarterResponsePlaintext: ' + StarterResponsePlaintext, '/nResponse: ' + Response, '/nArrayOfCollected: ' + collected.array(), '/nIf all three of the above do not match. something has gone terribly, terribly wrong.');
+			console.error('ProblemResponsePlaintext: ' + ProblemResponsePlaintext);
+			console.error('Author: ' + message.author.id);
+		}
+	}
+}
