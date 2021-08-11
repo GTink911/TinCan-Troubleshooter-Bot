@@ -1,4 +1,4 @@
-// As you might be able to guess, I'm clueless about what this code does. I'm a copy paster, not a new code writer! All I know is that it works :)
+// As you might be able to guess, I'm clueless about what this code does. All I know is that it works :)
 
 const { prefix } = require('../config.json');
 

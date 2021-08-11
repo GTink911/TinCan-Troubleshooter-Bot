@@ -297,7 +297,7 @@ module.exports = {
 			message.channel.send(YouBrokeTheBot)
 			var DebugMessageToSend = ('A major error occurred. Available details have been logged below:\nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
 			console.error(DebugMessageToSend);
-			// This logs the error to a private server of mine
+			// This logs the error to a private channel in the troubleshooting Discord
 			try {
 				client.channels.cache.get('826545941355560960').send(DebugMessageToSend)
 			} catch (Exception) {
