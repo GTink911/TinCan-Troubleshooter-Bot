@@ -16,7 +16,7 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-	console.log('Ready!');
+	console.log('Fully online.');
 	client.user.setActivity("Online and ready to help you troubleshoot - !troubleshoot :)")
 });
 

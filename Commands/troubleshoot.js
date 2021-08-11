@@ -1,5 +1,6 @@
 ﻿var StarterResponsePlaintext = 'DEBUG'
-
+var ProblemResponsePlaintext = 'DEBUG'
+var ResponseToCheckAgainst = 'DEBUG'
 
 module.exports = {
 	name: 'troubleshoot',
@@ -34,8 +35,6 @@ module.exports = {
 			.setTimestamp()
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
-		// still need to find the failure states for this, TODO urgently
-
 		const ProblemEmbed = new Discord.MessageEmbed()
 			.setColor('#5865F2')
 			.setTitle('Got it - now tell me, what\'s your issue?')
@@ -56,6 +55,14 @@ module.exports = {
 			.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot) :)')
 			.setTimestamp()
 			.setFooter('The details of this issue have automatically been logged. However, it would still be helpful if you submit a bug report.')
+
+		const IssueIsImpossible = new Discord.MessageEmbed()
+			.setColor('#5865F2')
+			.setTitle('That issue should be impossible...')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('But if you\'ve managed to get it, we\'re probably wrong. Create a issue on [our GitHub](https://github.com/GTink911/TinCan-Troubleshooter-Bot) to let us know!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
 		// Sending the starting embed
 
@@ -128,7 +135,7 @@ module.exports = {
 								StarterResponsePlaintext = 'L'
 								return WhatIsProblem();
 							default:
-								message.channel.send(YouBrokeTheBotFunct)
+								YouBrokeTheBotFunct()
 						}
                     }
 				});
@@ -179,124 +186,125 @@ module.exports = {
 		}
 
 		function FindProblem() {
+			if (ProblemResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
 			console.log('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
-
+			ResponseToCheckAgainst = StarterResponsePlaintext + '|' + ProblemResponsePlaintext
 			// From my understanding this statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
-			// Also, is it better performance-wise to eat the extra lines and add a break to the end of these?
 
-			// TODO: move all impossibles into default
-			// Remember to swap out power connector for power supply to prevent confusion
-			// Forgot data connector testing, should check that later
-
+			// Remember to swap out power connector for power supply in embeds
 			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it
-			switch (StarterResponsePlaintext + '|' +ProblemResponsePlaintext) {
+			switch (ResponseToCheckAgainst) {
 				case 'A|A':
-					console.log('power connector damaged')
+					console.log('power connector')
+					break;
 				case 'A|B':
 					console.log('damaged fuse, damaged switch')
-				case 'A|C':
-					console.log('impossible')
+					break;
 				case 'A|D':
-					console.log('damaged processor')
+					console.log('damaged processor, data connector')
+					break;
 				case 'B|A':
 					console.log('power connector, power transformer, fuse, switch')
-				case 'B|B':
-					console.log('impossible')
-				case 'B|C':
-					console.log('')
+					break;
 				case 'B|D':
 					console.log('processor')
+					break;
 				case 'C|A':
-					console.log('')
-				case 'C|B':
-					console.log('')
+					console.log('power connector')
+					break;
 				case 'C|C':
-					console.log('')
-				case 'C|D':
-					console.log('')
+					console.log('data connector')
+					break;
 				case 'D|A':
 					console.log('transformer, power connector')
+					break;
 				case 'D|B':
 					console.log('switch, fuse')
+					break;
 				case 'D|C':
-					console.log('pump, filter')
-				case 'D|D':
-					console.log('impossible')
+					console.log('pump, filter, data connector')
+					break;
 				case 'E|A':
 					console.log('transformer, connector')
+					break;
 				case 'E|B':
 					console.log('switch, fuse')
+					break;
 				case 'E|C':
 					console.log('pump')
-				case 'E|D':
-					console.log('impossible')
+					break;
 				case 'F|A':
 					console.log('transformer, power connector')
+					break;
 				case 'F|B':
 					console.log('switch, fuse')
-				case 'F|C':
-					console.log('impossible')
-				case 'F|D':
-					console.log('impossible')
-				case 'G|A':
-					console.log('impossible')
+					break;
 				case 'G|B':
 					console.log('fuse')
+					break;
 				case 'G|C':
 					console.log('transformer, power connector, battery')
-				case 'G|D':
-					console.log('impossible')
+					break;
 				case 'H|A':
 					console.log('power connector, transformer')
+					break;
 				case 'H|B':
 					console.log('fuse, switch')
-				case 'H|C':
-					console.log('impossible')
-				case 'H|D':
-					console.log('impossible')
+					break;
 				case 'I|A':
 					console.log('power connector, transformer')
+					break;
 				case 'I|B':
 					console.log('switch, fuse')
+					break;
 				case 'I|C':
 					console.log('pump')
+					break;
 				case 'I|D':
-					console.log('impossible')
+					console.log('data connector')
+					break;
 				case 'J|A':
 					console.log('transformer, power connector')
+					break;
 				case 'J|B':
 					console.log('switch, fuse')
+					break;
 				case 'J|C':
-					console.log('pump, filter')
-				case 'J|D':
-					console.log('impossible')
+					console.log('pump, filter, data connector')
+					break;
 				case 'K|A':
-					console.log('')
+					console.log('power connector, transformer')
+					break;
 				case 'K|B':
-					console.log('')
-				case 'K|C':
-					console.log('')
-				case 'K|D':
-					console.log('')
+					console.log('switch, fuse')
+					break;
 				case 'L|A':
-					console.log('')
+					console.log('power connector, power transformer')
+					break;
 				case 'L|B':
-					console.log('')
+					console.log('switch, fuse')
+					break;
 				case 'L|C':
-					console.log('')
-				case 'L|D':
-					console.log('')
+					console.log('pump')
+					break;
 				default:
-					console.log('DEBUG: Default triggered.')
+					message.channel.send(IssueIsImpossible)
+					break;
             }
         }
 
-		function YouBrokeTheBotFunct() {
+		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
-			console.error('A major error occurred. Available details have been logged below.');
-			console.error('StarterResponsePlaintext: ' + StarterResponsePlaintext, '/nResponse: ' + Response, '/nArrayOfCollected: ' + collected.array(), '/nIf all three of the above do not match. something has gone terribly, terribly wrong.');
-			console.error('ProblemResponsePlaintext: ' + ProblemResponsePlaintext);
-			console.error('Author: ' + message.author.id);
+			var DebugMessageToSend = ('A major error occurred. Available details have been logged below:\nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
+			console.error(DebugMessageToSend);
+			// This logs the error to a private server of mine
+			try {
+				client.channels.cache.get('826545941355560960').send(DebugMessageToSend)
+			} catch (Exception) {
+				console.log('Well, this isn\'t good. The error handling for YouBrokeTheBotFunt() had to trigger the backup error handling. Full details logged below.')
+				console.error(e)
+            }
+
 		}
 	}
 }
