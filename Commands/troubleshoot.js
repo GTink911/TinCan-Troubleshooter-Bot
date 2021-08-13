@@ -301,8 +301,8 @@ module.exports = {
 			try {
 				client.channels.cache.get('826545941355560960').send(DebugMessageToSend)
 			} catch (Exception) {
-				console.log('Well, this isn\'t good. The error handling for YouBrokeTheBotFunt() had to trigger the backup error handling. Full details logged below.')
-				console.error(e)
+				await console.log('Well, this isn\'t good. The error handling for YouBrokeTheBotFunt() had to trigger the backup error handling. Full details logged below.')
+				await console.error(e)
             }
 
 		}

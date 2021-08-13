@@ -1,7 +1,5 @@
 // NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
-// NOTE: Due to stupid reason in the name category you can't have capitals or it screws everything up
-
-// TODO: Fix reload command, I don't think its working
+// NOTE: Due to stupid reason in the name category you can't have capitals or it breaks
 
 const fs = require('fs');
 const Discord = require('discord.js');
