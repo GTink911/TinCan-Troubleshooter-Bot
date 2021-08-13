@@ -18,3 +18,5 @@ There are two major ways you can contribute:
 Bug Testing: Simply checking around for bugs, and reporting any you come accross by opening a issue, you can signifcantly improve the experience for others!
 
 Code Writing: See some of my horribly inefficient code, and know how to do better? If you have the time and will, feel free to fork the repository, rebuild it, and submit a pull request! I will be grateful, and you get your name added to the !credits command, if you so desire!
+
+![](https://github.com/GTink911/TinCan-Troubleshooter-Bot/blob/main/Media/Troubleshoot%20Cap.PNG)
