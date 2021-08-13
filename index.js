@@ -1,5 +1,6 @@
 // NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
-// NOTE: Due to stupid reason in the name category you can't have capitals or it breaks
+// NOTE: Due to stupid reason in the name category you can't have capitals
+
 
 const fs = require('fs');
 const Discord = require('discord.js');
@@ -30,16 +31,8 @@ client.on('message', async message => {
 	await command.execute(message, args, client, config, Discord)
 });
 
-// If anyone can figure out how to get the below to send a message when it breaks, I'd appreciate it.
-client.on("error", (e) => {
-	console.error(e);
-	return;
-});
-
-client.on("warn", (e) => {
-	console.warn(e);
-	return;
-});
+client.on("error", (e) => console.error(e));
+client.on("warn", (e) => console.warn(e));
 // client.on("debug", (e) => console.info(e));
 
 client.login(config.token);

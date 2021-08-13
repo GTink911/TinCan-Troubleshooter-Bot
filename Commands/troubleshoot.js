@@ -14,9 +14,9 @@ module.exports = {
 		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
 
 		const StarterEmbed = new Discord.MessageEmbed()
-			.setColor('#5865F2')
+			.setColor('#58b9ff')
 			.setTitle('Looks like its time to play another game of... \n***Troubleshooting Mania!***')
-			.setAuthor('Check out my GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setAuthor('Need help with the bot? Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/5fYBbRJDYS')
 			.setDescription('Thanks for playing! What system are you having troubles with, my lad/ladess?')
 			.addFields(
 				{ name: 'Main Generator', value: 'React with :regional_indicator_a:!', inline: true },
@@ -36,7 +36,7 @@ module.exports = {
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
 		const ProblemEmbed = new Discord.MessageEmbed()
-			.setColor('#5865F2')
+			.setColor('#58b9ff')
 			.setTitle('Got it - now tell me, what\'s your issue?')
 			.setAuthor('List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 			.setDescription('What problem are you having with the system?')
@@ -52,15 +52,47 @@ module.exports = {
 		const YouBrokeTheBot = new Discord.MessageEmbed()
 			.setTitle('Great job, you broke the bot!')
 			.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot) :)')
+			.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) :)')
 			.setTimestamp()
 			.setFooter('The details of this issue have automatically been logged. However, it would still be helpful if you submit a bug report.')
 
 		const IssueIsImpossible = new Discord.MessageEmbed()
-			.setColor('#5865F2')
+			.setColor('#58b9ff')
 			.setTitle('That issue should be impossible...')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new')
+			.setDescription('But if you\'ve managed to get it, we\'re probably wrong. Create a issue on [our GitHub](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) to let us know!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const PowerSupply = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your power supply!')
 			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('But if you\'ve managed to get it, we\'re probably wrong. Create a issue on [our GitHub](https://github.com/GTink911/TinCan-Troubleshooter-Bot) to let us know!')
+			.setDescription('Check your power connector/battery for issues. If it\'s black or sparking, then you\'ll know that\'s the issue.')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const SwitchOrFuse = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your fuse!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('Check your fuse for issues. If it\'s black, then it\'s busted and needs to be removed or repaired. This can also be the switch\'s fault, albeit very rarely. Try swapping it for another system\'s switch.')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const SupplyOrTransformer = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your power supply or transformer!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('Check your power connector/battery for issues. It can also be the transformer\'s fault - if they\'re black or red hot, then it\'s trashed, and you\'ll need to repair it or take it out!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const Pump = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your pump!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('Check your pump! If it is black(er than usual, you can also check in the repair station), then it\'s broken, and you\'ll need to repair it or swap it for another one!')
 			.setTimestamp()
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
@@ -143,7 +175,6 @@ module.exports = {
 		}
 
 		function WhatIsProblem() {
-			console.log('StarterResponsePlaintext: ' + StarterResponsePlaintext);
 
 			if (StarterResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
 
@@ -161,8 +192,6 @@ module.exports = {
 						const userReaction = collected.array()[0];
 
 						const response = userReaction._emoji.name;
-
-						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down a lot of code
 
 						switch (response) {
 							case '🇦':
@@ -187,124 +216,91 @@ module.exports = {
 
 		function FindProblem() {
 			if (ProblemResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
-			console.log('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
 			ResponseToCheckAgainst = StarterResponsePlaintext + '|' + ProblemResponsePlaintext
-			// From my understanding this statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
 
-			// Remember to swap out power connector for power supply in embeds
-			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it
+			// From my understanding this switch statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
+
+			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it. These all flow to the default
 			switch (ResponseToCheckAgainst) {
 				case 'A|A':
-					console.log('power connector')
-					break;
+					return message.channel.send(PowerSupply)
 				case 'A|B':
-					console.log('damaged fuse, damaged switch')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'A|D':
-					console.log('damaged processor, data connector')
-					break;
+					return console.log('damaged processor, data connector')
 				case 'B|A':
-					console.log('power connector, power transformer, fuse, switch')
-					break;
+					return console.log('power connector, power transformer, fuse, switch')
 				case 'B|D':
-					console.log('processor')
-					break;
+					return console.log('processor')
 				case 'C|A':
-					console.log('power connector')
-					break;
+					return message.channel.send(PowerSupply)
 				case 'C|C':
-					console.log('data connector')
-					break;
+					return console.log('data connector')
 				case 'D|A':
-					console.log('transformer, power connector')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'D|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'D|C':
-					console.log('pump, filter, data connector')
-					break;
+					return console.log('pump, filter, data connector')
 				case 'E|A':
-					console.log('transformer, connector')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'E|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'E|C':
-					console.log('pump')
-					break;
+					return message.channel.send(Pump)
 				case 'F|A':
-					console.log('transformer, power connector')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'F|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'G|B':
-					console.log('fuse')
-					break;
+					return console.log('fuse')
 				case 'G|C':
-					console.log('transformer, power connector, battery')
-					break;
+					return console.log('transformer, power connector, battery')
 				case 'H|A':
-					console.log('power connector, transformer')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'H|B':
-					console.log('fuse, switch')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'I|A':
-					console.log('power connector, transformer')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'I|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'I|C':
-					console.log('pump')
-					break;
+					return message.channel.send(Pump)
 				case 'I|D':
-					console.log('data connector')
-					break;
+					return console.log('data connector')
 				case 'J|A':
-					console.log('transformer, power connector')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'J|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'J|C':
-					console.log('pump, filter, data connector')
-					break;
+					return console.log('pump, filter, data connector')
 				case 'K|A':
-					console.log('power connector, transformer')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'K|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'L|A':
-					console.log('power connector, power transformer')
-					break;
+					return message.channel.send(SupplyOrTransformer)
 				case 'L|B':
-					console.log('switch, fuse')
-					break;
+					return message.channel.send(SwitchOrFuse)
 				case 'L|C':
-					console.log('pump')
-					break;
+					return message.channel.send(Pump)
 				default:
-					message.channel.send(IssueIsImpossible)
-					break;
+					return message.channel.send(IssueIsImpossible)
             }
         }
 
 		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
 			var DebugMessageToSend = ('A major error occurred. Available details have been logged below:\nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
-			console.error(DebugMessageToSend);
+
 			// This logs the error to a private channel in the troubleshooting Discord
 			try {
 				client.channels.cache.get('826545941355560960').send(DebugMessageToSend)
 			} catch (Exception) {
-				await console.log('Well, this isn\'t good. The error handling for YouBrokeTheBotFunt() had to trigger the backup error handling. Full details logged below.')
+				await console.log('Couldn\'t send the message to the error channel. Sending here instead.')
+				await console.error(DebugMessageToSend);
 				await console.error(e)
             }
-
 		}
 	}
 }
