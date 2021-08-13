@@ -96,6 +96,14 @@ module.exports = {
 			.setTimestamp()
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
+		const DataConnector = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your data connector!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('Check your data connector - if the wire is black, then you\'ve found the culprit!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
 		// Sending the starting embed
 
 		StartTroubleshoot();
@@ -235,7 +243,7 @@ module.exports = {
 				case 'C|A':
 					return message.channel.send(PowerSupply)
 				case 'C|C':
-					return console.log('data connector')
+					return message.channel.send(DataConnector)
 				case 'D|A':
 					return message.channel.send(SupplyOrTransformer)
 				case 'D|B':
@@ -267,7 +275,7 @@ module.exports = {
 				case 'I|C':
 					return message.channel.send(Pump)
 				case 'I|D':
-					return console.log('data connector')
+					return message.channel.send(DataConnector)
 				case 'J|A':
 					return message.channel.send(SupplyOrTransformer)
 				case 'J|B':
