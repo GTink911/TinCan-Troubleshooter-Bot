@@ -104,6 +104,46 @@ module.exports = {
 			.setTimestamp()
 			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
+		const PumpFilterDataConnector = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your pump, filter, or data connector!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('If any of them are blackened, then you\'ll know that\'s your issue! To fix it, you\'ll need to swap it out for another or throw it in the repair station!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const PowerSupplyPowerTransformerFuseSwitch = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your - this is a long one - power supply (connector/battery), transformer, fuse, or switch!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('If one of them is black, you\'ll know that\'s the culprit. To fix it, you\'ll need to swap it out for another or throw it in the repair station!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const Fuse = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your fuse!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('Check your fuse! If it\'s black in contrast to it\'s usually white-grey color, you\'ve found the problem. Pull it out, and optionally repair it, to solve the problem!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const Processor = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your processor!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('A damaged processor will cause the system to start acting up! Repair it, or take it out (but risk causing more serious damage!)')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
+		const ProcessorDataConnector = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Check your processor or data connector!')
+			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setDescription('If either of them are blackened/broken, then you\'ll know that\'s your issue! To fix it, you\'ll need to swap it out for another or throw it in the repair station!')
+			.setTimestamp()
+			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
+
 		// Sending the starting embed
 
 		StartTroubleshoot();
@@ -201,6 +241,8 @@ module.exports = {
 
 						const response = userReaction._emoji.name;
 
+						// FIXME: Manually reacting with E or other reaction allowed in initial causes the default to trigger, caused by using the same filter.
+
 						switch (response) {
 							case '🇦':
 								ProblemResponsePlaintext = 'A'
@@ -228,18 +270,18 @@ module.exports = {
 
 			// From my understanding this switch statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
 
-			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it. These all flow to the default
+			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it. These all flow to the default. Feel free to revise as versions are updated.
 			switch (ResponseToCheckAgainst) {
 				case 'A|A':
 					return message.channel.send(PowerSupply)
 				case 'A|B':
 					return message.channel.send(SwitchOrFuse)
 				case 'A|D':
-					return console.log('damaged processor, data connector')
+					return message.channel.send(ProcessorDataConnector)
 				case 'B|A':
-					return console.log('power connector, power transformer, fuse, switch')
+					return message.channel.send(PowerSupplyPowerTransformerFuseSwitch)
 				case 'B|D':
-					return console.log('processor')
+					return message.channel.send(Processor)
 				case 'C|A':
 					return message.channel.send(PowerSupply)
 				case 'C|C':
@@ -249,7 +291,7 @@ module.exports = {
 				case 'D|B':
 					return message.channel.send(SwitchOrFuse)
 				case 'D|C':
-					return console.log('pump, filter, data connector')
+					return message.channel.send(PumpFilterDataConnector)
 				case 'E|A':
 					return message.channel.send(SupplyOrTransformer)
 				case 'E|B':
@@ -261,9 +303,9 @@ module.exports = {
 				case 'F|B':
 					return message.channel.send(SwitchOrFuse)
 				case 'G|B':
-					return console.log('fuse')
+					return message.channel.send(Fuse)
 				case 'G|C':
-					return console.log('transformer, power connector, battery')
+					return message.channel.send(SupplyOrTransformer)
 				case 'H|A':
 					return message.channel.send(SupplyOrTransformer)
 				case 'H|B':
@@ -281,7 +323,7 @@ module.exports = {
 				case 'J|B':
 					return message.channel.send(SwitchOrFuse)
 				case 'J|C':
-					return console.log('pump, filter, data connector')
+					return message.channel.send(PumpFilterDataConnector)
 				case 'K|A':
 					return message.channel.send(SupplyOrTransformer)
 				case 'K|B':
@@ -299,15 +341,17 @@ module.exports = {
 
 		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
-			var DebugMessageToSend = ('A major error occurred. Available details have been logged below:\nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
+			// FIXME: The below message only outputs ProblemResponsePlaintext, ResponseToCheckAgainst, and Author ID to Discord??? Skips over most of the first section
+			var DebugMessageToSend = ('A major error occurred. Available details have been logged below: \nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
 
 			// This logs the error to a private channel in the troubleshooting Discord
 			try {
 				client.channels.cache.get('826545941355560960').send(DebugMessageToSend)
 			} catch (Exception) {
-				await console.log('Couldn\'t send the message to the error channel. Sending here instead.')
-				await console.error(DebugMessageToSend);
+				await console.log('Couldn\'t send error message to the error channel. Sending here instead.')
 				await console.error(e)
+				await console.log('')
+				await console.error(DebugMessageToSend);
             }
 		}
 	}
