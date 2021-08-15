@@ -1,6 +1,4 @@
 // NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
-// NOTE: Due to stupid reason in the name category you can't have capitals
-
 
 const fs = require('fs');
 const Discord = require('discord.js');

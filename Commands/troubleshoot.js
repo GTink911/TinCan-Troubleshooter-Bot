@@ -341,8 +341,7 @@ module.exports = {
 				case 'L|C':
 					return message.channel.send(Pump)
 				default:
-					return YouBrokeTheBotFunct();
-					//return message.channel.send(IssueIsImpossible)
+					return message.channel.send(IssueIsImpossible)
             }
         }
 

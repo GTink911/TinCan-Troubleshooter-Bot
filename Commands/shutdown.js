@@ -3,9 +3,9 @@ module.exports = {
 	description: 'Shuts down the bot. Owner only.',
 	async execute(message) {
 		if (message.author.id === '390674838408134659'){
-			message.reply(`OK - shutting myself down!`)
-			console.log('Hey - I\'m shutting down :3')
-			return process.exit()
+			await message.channel.send(`OK - shutting down!`)
+			await console.log('Shutting down')
+			await process.exit()
 		} else {
 			return message.channel.send('Why are you trying to shutdown the bot :/')
 		}
