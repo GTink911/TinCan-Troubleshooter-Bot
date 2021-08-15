@@ -152,30 +152,15 @@ module.exports = {
 			message.channel.send(StarterEmbed).then(async sentMessage => {
 
 				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
-
-				await sentMessage.channel.send('Unfortunately, I\'m not sure how to let you react before they\'re done without also breaking the reaction order. I\'m (probably) working on a fix but until then you\'ll just have to wait. Sorry!')
-				await sentMessage.react('🇦')
-				await sentMessage.react('🇧')
-				await sentMessage.react('🇨')
-				await sentMessage.react('🇩')
-				await sentMessage.react('🇪')
-				await sentMessage.react('🇫')
-				await sentMessage.react('🇬')
-				await sentMessage.react('🇭')
-				await sentMessage.react('🇮')
-				await sentMessage.react('🇯')
-				await sentMessage.react('🇰')
-				await sentMessage.react('🇱')
-
 				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					} else {
-						const userReaction = collected.array()[0];
 
+						const userReaction = collected.array()[0];
 						const response = userReaction._emoji.name;
 
-						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down a lot of code
+						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down on some code
 
 						switch (response) {
 							case '🇦':
@@ -217,8 +202,22 @@ module.exports = {
 							default:
 								YouBrokeTheBotFunct()
 						}
-                    }
+					}
 				});
+
+				await sentMessage.react('🇦')
+				await sentMessage.react('🇧')
+				await sentMessage.react('🇨')
+				await sentMessage.react('🇩')
+				await sentMessage.react('🇪')
+				await sentMessage.react('🇫')
+				await sentMessage.react('🇬')
+				await sentMessage.react('🇭')
+				await sentMessage.react('🇮')
+				await sentMessage.react('🇯')
+				await sentMessage.react('🇰')
+				await sentMessage.react('🇱')
+
 			});
 		}
 
@@ -240,9 +239,7 @@ module.exports = {
 						const userReaction = collected.array()[0];
 
 						const response = userReaction._emoji.name;
-
-						// FIXME: Manually reacting with E or other reaction allowed in initial causes the default to trigger, caused by using the same filter.
-
+						
 						switch (response) {
 							case '🇦':
 								ProblemResponsePlaintext = 'A'
@@ -256,6 +253,15 @@ module.exports = {
 							case '🇩':
 								ProblemResponsePlaintext = 'D'
 								return FindProblem();
+							// This section is to stop extra reactions from flowing to default, since they use the same filter
+							case '🇪': return
+							case '🇫': return
+							case '🇬': return
+							case '🇭': return
+							case '🇮': return
+							case '🇯': return
+							case '🇰': return
+							case '🇱': return
 							default:
 								YouBrokeTheBotFunct();
 						}
@@ -335,23 +341,40 @@ module.exports = {
 				case 'L|C':
 					return message.channel.send(Pump)
 				default:
-					return message.channel.send(IssueIsImpossible)
+					return YouBrokeTheBotFunct();
+					//return message.channel.send(IssueIsImpossible)
             }
         }
 
 		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
-			// FIXME: The below message only outputs ProblemResponsePlaintext, ResponseToCheckAgainst, and Author ID to Discord??? Skips over most of the first section
+			// For some reason, when using the below variable only "ProblemResponsePlaintext", "ResponseToCheckAgainst", and "Author" get logged. The first variable, and the text before it, are completely removed. I replaced this with a temporary workaround for now.
 			var DebugMessageToSend = ('A major error occurred. Available details have been logged below: \nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
 
 			// This logs the error to a private channel in the troubleshooting Discord
 			try {
-				client.channels.cache.get('826545941355560960').send(DebugMessageToSend)
+				const privateloggingchannel = client.channels.cache.get('826545941355560960')
+
+				// privateloggingchannel.send(DebugMessagetoSend)
+
+				privateloggingchannel.send('A major error occurred. Available details have been logged below:')
+				privateloggingchannel.send('StarterResponsePlaintext: ' + StarterResponsePlaintext)
+				privateloggingchannel.send('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
+				privateloggingchannel.send('ResponseToCheckAgainst: ' + ResponseToCheckAgainst)
+				privateloggingchannel.send('Author: ' + message.author.id)
+
 			} catch (Exception) {
 				await console.log('Couldn\'t send error message to the error channel. Sending here instead.')
+				await console.log('')
 				await console.error(e)
 				await console.log('')
-				await console.error(DebugMessageToSend);
+				await console.log('A major error occurred. Available details have been logged below:')
+				await console.log('StarterResponsePlaintext: ' + StarterResponsePlaintext)
+				await console.log('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
+				await console.log('ResponseToCheckAgainst: ' + ResponseToCheckAgainst)
+				await console.log('Author: ' + message.author.id)
+
+				// await console.error(DebugMessageToSend);
             }
 		}
 	}

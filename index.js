@@ -21,6 +21,8 @@ client.once('ready', () => {
 
 client.on('message', async message => {
 
+	if (message.author.bot) return;
+
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
