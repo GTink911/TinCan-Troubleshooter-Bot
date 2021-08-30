@@ -2,13 +2,233 @@
 var ProblemResponsePlaintext = 'DEBUG'
 var ResponseToCheckAgainst = 'DEBUG'
 
+var ReactionsString = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱";
+var ReactionsPlainString = "ABCDEFGHIJKL"
+
+//need extra step for the split function to work zzz
+var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"];
+var ReactionsPlainStringArr = ReactionsPlainString.split("");
+
+// some variables that are constant
+var defaults = {
+	'color' : '#58b9ff',
+	'tincan' : {
+		'logo' : 'https://i.imgur.com/3Bvt2DV.png',
+	},
+	'bot': {
+		'discord': 'https://discord.gg/5fYBbRJDYS',
+	},
+	'parts':{
+		'filter':'Air Filter',
+		'alarms': {
+			'c' : 'Caution Alarm',
+			'w' : 'Warning Alarm',
+		},
+		'battery' : {
+			's' : 'Large Battery',
+			'hc' : 'Large High Capacity Battery'
+		},
+		'bottle': {
+			'o2' : 'Oxygen Bottle',
+			'co2' : 'CO2 Bottle',
+			'n': 'Nitrogen Bottle',
+			'ln' : 'Liquid Nitrogen Bottle'
+		},
+		'buzzer': 'Buzzer',
+		'crt': 'CRT Monitor',
+		'data' : 'Data Connector',
+		'fan' : 'Fan',
+		'fuse' : {
+			's' : 'Fuse',
+			'hc' : 'High Capacity Fuse',
+		},
+		'power': {
+			's':'Power Connector',
+			'hc' : 'High Capacity Power Connector'
+		},
+		'switch' : 'switch',
+		'trans' : {
+			's' : 'Power Transformer',
+			'hc' : 'High Capacity Power Transformer'
+		},
+		'proc' : 'Processor',
+		'pump' : 'Pump',
+	},
+	'system' : {
+		'generator': {'name':'Main Generator'},
+		'computer': {'name':'Main Computer'},
+		'beacon': {'name':'Rescue Beacon'},
+		'scrubber': {'name':'CO2 Scrubber'},
+		'recycler': {'name':'CO2 to O2 Station'},
+		'light': {'name':'Lighting Systems'},
+		'charger': {'name':'Fast Battery Charger'},
+		'gravity': {'name':'Gravity Generator'},
+		'oxygen': {'name':'O2 Generator'},
+		'pressure': {'name':'Pressure Stabilizer'},
+		'repair': {'name':'Repair Station'},
+		'temperature': {'name':'Temperature Manager'}
+	}
+};
+defaults.systemsList = [
+	defaults.system.generator,
+	defaults.system.computer,
+	defaults.system.beacon,
+	defaults.system.scrubber,
+	defaults.system.recycler,
+	defaults.system.light,
+	defaults.system.charger,
+	defaults.system.gravity,
+	defaults.system.oxygen,
+	defaults.system.pressure,
+	defaults.system.repair,
+	defaults.system.temperature,
+];
+var parts = defaults.parts; //so we can shortcut this 
+defaults.system.generator.parts = [
+	parts.alarms.c,
+	parts.alarms.w,
+	parts.buzzer,
+	parts.crt,
+	parts.data,
+	parts.fuse.hc,
+	parts.power.hc,
+	parts.switch,
+	parts.trans.hc,
+	parts.proc
+];
+defaults.system.computer.parts=[
+	parts.alarms.c,
+	parts.alarms.w,
+	parts.crt,
+	parts.switch,
+	parts.buzzer,
+	parts.data,
+	parts.proc,
+	parts.battery.s,
+	parts.fuse.s,
+	parts.power.s,
+	parts.trans.s,
+];
+defaults.system.beacon.parts=[
+	parts.power.s,
+	parts.trans.s,
+	parts.trans.fuse,
+	parts.data,
+	parts.crt,
+	parts.battery.s
+];
+defaults.system.scrubber.parts=[
+	parts.alarms.w,
+	parts.alarms.c,
+	parts.crt,
+	parts.switch,
+	parts.filter,
+	parts.battery.s,
+	parts.bottle,
+	parts.buzzer,
+	parts.data,
+	parts.fuse.s,
+	parts.power.s,
+	parts.trans.s,
+	parts.pump
+];
+defaults.system.recycler.parts = [
+	parts.bottle,
+	parts.switch,
+	parts.battery.s,
+	parts.fuse.s,
+	parts.trans.s,
+	parts.pump,
+];
+defaults.system.light.parts = [
+	parts.switch,
+	parts.battery.s,
+	parts.fuse.s,
+	parts.trans.s
+];
+defaults.system.charger.parts = [
+	parts.switch,
+	parts.power.s,
+	parts.fuse.s,
+	parts.trans.s
+];
+defaults.system.gravity.parts = [
+	parts.alarms.c,
+	parts.alarms.w,
+	parts.battery.hc,
+	parts.buzzer,
+	parts.crt,
+	parts.data,
+	parts.fuse.hc,
+	parts.power.hc,
+	parts.switch,
+	parts.trans.hc,
+	parts.processor
+];
+defaults.systems.oxygen.parts = [
+	parts.alarms.c,
+	parts.alarms.w,
+	parts.crt,
+	parts.switch,
+	parts.battery.s,
+	parts.bottle,
+	parts.buzzer,
+	parts.data,
+	parts.fuse.s,
+	parts.power.s,
+	parts.trans.s,
+	parts.pump
+];
+defaults.system.pressure.parts = [
+	parts.alarms.w,
+	parts.alarms.c,
+	parts.crt,
+	parts.switch,
+	parts.filter,
+	parts.battery.s,
+	parts.bottler,
+	parts.buzzer,
+	parts.data,
+	parts.fuse.s,
+	parts.power.s,
+	parts.trans.s,
+	parts.pump
+	
+];
+defaults.system.repair.parts = [
+	parts.alarms.c,
+	parts.alarms.w,
+	parts.crt,
+	parts.switch,
+	parts.battery.s,
+	parts.buzzer,
+	parts.data,
+	parts.fuse.s,
+	parts.power.s,
+	parts.trans.s
+];
+defaults.system.temperature.parts = [
+	parts.alarms.c,
+	parts.alarms.w,
+	parts.crt,
+	parts.switch,
+	parts.battery.s,
+	parts.bottle,
+	parts.buzzer,
+	parts.data,
+	parts.fuse.s,
+	parts.power.s,
+	parts.trans.s,
+	parts.pump
+];
+//add systems parts here
 module.exports = {
 	name: 'troubleshoot',
 	description: 'Start troublehooting a problem in your Tin Can!',
 	execute(message, args, client, config, Discord) {
 
 		const filter = (reaction, user) => {
-			return ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮', '🇯', '🇰', '🇱',].includes(reaction.emoji.name) && user.id === message.author.id;
+			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
 		};
 
 		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
@@ -155,69 +375,35 @@ module.exports = {
 				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
-					} else {
+					}else {
 
 						const userReaction = collected.array()[0];
 						const response = userReaction._emoji.name;
 
 						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down on some code
-
-						switch (response) {
-							case '🇦':
-								StarterResponsePlaintext = 'A'
-								return WhatIsProblem();
-							case '🇧':
-								StarterResponsePlaintext = 'B'
-								return WhatIsProblem();
-							case '🇨':
-								StarterResponsePlaintext = 'C'
-								return WhatIsProblem();
-							case '🇩':
-								StarterResponsePlaintext = 'D'
-								return WhatIsProblem();
-							case '🇪':
-								StarterResponsePlaintext = 'E'
-								return WhatIsProblem();
-							case '🇫':
-								StarterResponsePlaintext = 'F'
-								return WhatIsProblem();
-							case '🇬':
-								StarterResponsePlaintext = 'G'
-								return WhatIsProblem();
-							case '🇭':
-								StarterResponsePlaintext = 'H'
-								return WhatIsProblem();
-							case '🇮':
-								StarterResponsePlaintext = 'I'
-								return WhatIsProblem();
-							case '🇯':
-								StarterResponsePlaintext = 'J'
-								return WhatIsProblem();
-							case '🇰':
-								StarterResponsePlaintext = 'K'
-								return WhatIsProblem();
-							case '🇱':
-								StarterResponsePlaintext = 'L'
-								return WhatIsProblem();
-							default:
-								YouBrokeTheBotFunct()
+						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response) 
+						if ( ReactionsStringResponseIndex != -1)
+						{
+							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+							return WhatIsProblem();
 						}
+						else{
+							YouBrokeTheBotFunct()//
+						}
+						
+
 					}
 				});
+				//since we display per system
+				//converts it to unicode zzz
 
-				await sentMessage.react('🇦')
-				await sentMessage.react('🇧')
-				await sentMessage.react('🇨')
-				await sentMessage.react('🇩')
-				await sentMessage.react('🇪')
-				await sentMessage.react('🇫')
-				await sentMessage.react('🇬')
-				await sentMessage.react('🇭')
-				await sentMessage.react('🇮')
-				await sentMessage.react('🇯')
-				await sentMessage.react('🇰')
-				await sentMessage.react('🇱')
-
+				for( var i=0 ; i < defaults.systemsList.length; i++)
+				{
+					
+					await sentMessage.react(ReactionsStringArr[i])
+				}
+				
+			
 			});
 		}
 
@@ -348,6 +534,7 @@ module.exports = {
 		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
 			// For some reason, when using the below variable only "ProblemResponsePlaintext", "ResponseToCheckAgainst", and "Author" get logged. The first variable, and the text before it, are completely removed. I replaced this with a temporary workaround for now.
+			/*
 			var DebugMessageToSend = ('A major error occurred. Available details have been logged below: \nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
 
 			// This logs the error to a private channel in the troubleshooting Discord
@@ -365,7 +552,7 @@ module.exports = {
 			} catch (Exception) {
 				await console.log('Couldn\'t send error message to the error channel. Sending here instead.')
 				await console.log('')
-				await console.error(e)
+				await console.error(Exception)
 				await console.log('')
 				await console.log('A major error occurred. Available details have been logged below:')
 				await console.log('StarterResponsePlaintext: ' + StarterResponsePlaintext)
@@ -374,7 +561,7 @@ module.exports = {
 				await console.log('Author: ' + message.author.id)
 
 				// await console.error(DebugMessageToSend);
-            }
+            }*/
 		}
 	}
 }
