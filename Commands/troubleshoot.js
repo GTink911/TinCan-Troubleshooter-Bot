@@ -9,6 +9,7 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 //need extra step for the split function to work zzz
 var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"];
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
+var ReactionLength = 0;
 
 // some variables that are constant
 var defaults = {
@@ -24,7 +25,7 @@ var defaults = {
 		'filter':{'name': 'Air Filter'},
 		'alarms': {'name': 'Alarms'},
 		'battery' : {'name':'Large Battery'},
-		'bottle':{'name': 'bottle'},
+		'bottle':{'name': 'Bottle'},
 		'buzzer': {'name':'Buzzer'},
 		'crt': {'name':'CRT Monitor'},
 		'data' : {'name':'Data Connector'},
@@ -172,7 +173,7 @@ systems.gravity.parts = [
 	parts.power,
 	parts.switch,
 	parts.trans,
-	parts.processor
+	parts.proc
 ];
 systems.oxygen.parts = [
 	parts.alarms,
@@ -221,7 +222,7 @@ systems.temperature.parts = [
 	parts.crt,
 	parts.switch,
 	parts.battery,
-	parts.bottle.ln,
+	parts.bottle,
 	parts.buzzer,
 	parts.data,
 	parts.fuse,
@@ -282,7 +283,7 @@ errors.highGrav = {'name':'highGrav','blackList':GetBlackList(defaults.systemsLi
 //initialize part issues here
 parts.filter.issues= [errors.production, errors.noHiss];
 parts.alarms.issues= [errors.retriggering];
-parts.battery.issues=[];
+parts.battery.issues=[errors.production];
 parts.bottle.issues= [errors.production];
 parts.buzzer.issues= [errors.buzzerNoise];
 parts.crt.issues = [errors.flickering];
@@ -329,17 +330,15 @@ module.exports = {
 				{
 					ret.setAuthor(this.author[0],this.author[1],this.author[2]);
 				}
-				if ( this.desc !== "") 
-				{
-					ret.setDescription = this.desc;
-				}
+				ret.setDescription (this.desc);
+				
 				if(!this.defaultFields)
 				{
 					var val_i = "'React with :regional_indicator_";
 
 					for(var i=0; i< this.fields.length; i++)
 					{
-						//console.log({name:this.fields[i].name, value:this.fields[i].value,inline:this.fieldsInline});
+				
 						ret.addField(this.fields[i], (val_i+(ReactionsPlainStringArr[i].toLocaleLowerCase())+":!"), this.fieldsInline);
 					}
 				}
@@ -368,121 +367,14 @@ module.exports = {
 		
 
 		const filter = (reaction, user) => {
+			
 			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
 		};
 
 		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
 
 
-		const ProblemEmbed = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Got it - now tell me, what\'s your issue?')
-			.setAuthor('List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('What problem are you having with the system?')
-			.addFields(
-				{ name: 'The switch is on, but the system does not have power!', value: 'React with :regional_indicator_a:!', inline: false },
-				{ name: 'The switch is off, and it disables itself immediately after clicked!', value: 'React with :regional_indicator_b:!', inline: false },
-				{ name: 'The system has power, but the system is not functioning or data is replaced with boxes!', value: 'React with :regional_indicator_c:!', inline: false },
-				{ name: 'The system has power, but is functioning incorrectly!', value: 'React with :regional_indicator_d:!', inline: false },
-			)
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const YouBrokeTheBot = new Discord.MessageEmbed()
-			.setTitle('Great job, you broke the bot!')
-			.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) :)')
-			.setTimestamp()
-			.setFooter('The details of this issue have automatically been logged. However, it would still be helpful if you submit a bug report.')
-
-		const IssueIsImpossible = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('That issue should be impossible...')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new')
-			.setDescription('But if you\'ve managed to get it, we\'re probably wrong. Create a issue on [our GitHub](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) to let us know!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const PowerSupply = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your power supply!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Check your power connector/battery for issues. If it\'s black or sparking, then you\'ll know that\'s the issue.')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const SwitchOrFuse = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your fuse!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Check your fuse for issues. If it\'s black, then it\'s busted and needs to be removed or repaired. This can also be the switch\'s fault, albeit very rarely. Try swapping it for another system\'s switch.')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const SupplyOrTransformer = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your power supply or transformer!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Check your power connector/battery for issues. It can also be the transformer\'s fault - if they\'re black or red hot, then it\'s trashed, and you\'ll need to repair it or take it out!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const Pump = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your pump!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Check your pump! If it is black(er than usual, you can also check in the repair station), then it\'s broken, and you\'ll need to repair it or swap it for another one!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const DataConnector = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your data connector!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Check your data connector - if the wire is black, then you\'ve found the culprit!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const PumpFilterDataConnector = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your pump, filter, or data connector!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('If any of them are blackened, then you\'ll know that\'s your issue! To fix it, you\'ll need to swap it out for another or throw it in the repair station!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const PowerSupplyPowerTransformerFuseSwitch = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your - this is a long one - power supply (connector/battery), transformer, fuse, or switch!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('If one of them is black, you\'ll know that\'s the culprit. To fix it, you\'ll need to swap it out for another or throw it in the repair station!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const Fuse = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your fuse!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('Check your fuse! If it\'s black in contrast to it\'s usually white-grey color, you\'ve found the problem. Pull it out, and optionally repair it, to solve the problem!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const Processor = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your processor!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('A damaged processor will cause the system to start acting up! Repair it, or take it out (but risk causing more serious damage!)')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
-		const ProcessorDataConnector = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Check your processor or data connector!')
-			.setAuthor('Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
-			.setDescription('If either of them are blackened/broken, then you\'ll know that\'s your issue! To fix it, you\'ll need to swap it out for another or throw it in the repair station!')
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
-
+		
 		// Sending the starting embed
 
 		StartTroubleshoot();
@@ -507,7 +399,8 @@ module.exports = {
 				
 				tempStarterEmbed.create()
 				).then(async sentMessage => {
-
+				
+				ReactionLength = defaults.systemsList.length;
 				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
 				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
@@ -529,14 +422,11 @@ module.exports = {
 
 					}
 				});
-			
 				for( var i=0 ; i < defaults.systemsList.length; i++)
 				{
 					
 					await sentMessage.react(ReactionsStringArr[i])
 				}
-				
-			
 			});
 
 		}
@@ -565,13 +455,11 @@ module.exports = {
 						{
 							if(issuesArray.indexOf(tempPart.issues[j].name) == -1)//not added
 							{
-	
 								issuesArray.push(currentIssue.name);
 								partsArray.push([])
 							}
 							var issueIndex = issuesArray.indexOf(currentIssue.name);
 							//add said part on a set off issue arrays
-							
 							partsArray[issueIndex].push(tempPart.name)
 						}
 						
@@ -593,10 +481,10 @@ module.exports = {
 			if (StarterResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
 			
 			var systemObj = CreateFieldsForSystems(systemIndex);
-			let tempProblemEmbed = new DCME();
-			tempProblemEmbed.title = 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?';
-			tempProblemEmbed.author = ['List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-			tempProblemEmbed.desc = 'What problem are you having with the system?';
+			let problemEmbed = new DCME();
+			problemEmbed.title = 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?';
+			problemEmbed.author = ['List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+			problemEmbed.desc = 'What problem are you having with the system?';
 			var tempFields = [];
 			var fieldText;
 			var error;
@@ -682,147 +570,185 @@ module.exports = {
 				}
 				tempFields.push(fieldText)
 			}
-			tempProblemEmbed.setFields(tempFields)
+			problemEmbed.setFields(tempFields)
 			
 			message.channel.send(
-				tempProblemEmbed.create()
+				problemEmbed.create()
 			).then(
 				async sentMessage =>{
+					
+					const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
+					ReactionCollector.on('end',(collected, reason) => {
+						if (reason === 'time'){
+							sentMessage.channel.send('Uh oh- you timed out!');
+						}
+						else
+						{
+							const userReaction = collected.array()[0];
+						
+							const response = userReaction._emoji.name;
+							
+							//get the index of the reaction
+							var issuesIndex = ReactionsStringArr.indexOf(response);
+							
+							//get the associated parts
+							var issueParts = systemObj.fields[issuesIndex].parts;
+
+							//
+							let finalEmbed = new DCME();
+							var issuePartsText = "";
+							for(var i = 0 ; i < issueParts.length; i++)
+							{
+								var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
+								if ( i == 0 )
+								{
+									issuePartsText += tempIssuesPart;
+								}
+								else if (i >= 1 && i != (issueParts.length -1))
+								{
+									issuePartsText +=", "+tempIssuesPart;
+								}
+								else if (i == (issueParts.length -1))
+								{
+									issuePartsText +=" and "+tempIssuesPart;
+								}
+							}
+							finalEmbed.title = "Check your "+issuePartsText+".";
+							finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+							finalEmbed.desc = SanitizeFinalDesc(issueParts);
+							message.channel.send(finalEmbed.create());
+						}
+					});
 					for( var i=0 ; i < systemObj.fields.length; i++)
 					{
-						
 						await sentMessage.react(ReactionsStringArr[i])
 					}
-
+					
 				}
 			);
-			/* message.channel.send(ProblemEmbed).then(async sentMessage => {
-				await sentMessage.react('🇦')
-				await sentMessage.react('🇧')
-				await sentMessage.react('🇨')
-				await sentMessage.react('🇩')
-				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
-
-				ReactionCollector.on('end', (collected, reason) => {
-					if (reason === 'time') {
-						sentMessage.channel.send('Uh oh- you timed out!')
-					} else {
-						const userReaction = collected.array()[0];
-
-						const response = userReaction._emoji.name;
-						
-						switch (response) {
-							case '🇦':
-								ProblemResponsePlaintext = 'A'
-								return FindProblem();
-							case '🇧':
-								ProblemResponsePlaintext = 'B'
-								return FindProblem();
-							case '🇨':
-								ProblemResponsePlaintext = 'C'
-								return FindProblem();
-							case '🇩':
-								ProblemResponsePlaintext = 'D'
-								return FindProblem();
-							// This section is to stop extra reactions from flowing to default, since they use the same filter
-							case '🇪': return
-							case '🇫': return
-							case '🇬': return
-							case '🇭': return
-							case '🇮': return
-							case '🇯': return
-							case '🇰': return
-							case '🇱': return
-							default:
-								YouBrokeTheBotFunct();
-						}
-					}
-				});
-			}); */
+			
+			
 		}
 
-		function FindProblem() {
-			if (ProblemResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
-			ResponseToCheckAgainst = StarterResponsePlaintext + '|' + ProblemResponsePlaintext
-
-			// From my understanding this switch statement does the job, but is slow (comparatively). Do any more experienced programmers know the best way to do this?
-
-			// NOTE: If you don't see a condition here, I found it was impossible in my testing and removed it. These all flow to the default. Feel free to revise as versions are updated.
-			switch (ResponseToCheckAgainst) {
-				case 'A|A':
-					return message.channel.send(PowerSupply)
-				case 'A|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'A|D':
-					return message.channel.send(ProcessorDataConnector)
-				case 'B|A':
-					return message.channel.send(PowerSupplyPowerTransformerFuseSwitch)
-				case 'B|D':
-					return message.channel.send(Processor)
-				case 'C|A':
-					return message.channel.send(PowerSupply)
-				case 'C|C':
-					return message.channel.send(DataConnector)
-				case 'D|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'D|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'D|C':
-					return message.channel.send(PumpFilterDataConnector)
-				case 'E|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'E|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'E|C':
-					return message.channel.send(Pump)
-				case 'F|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'F|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'G|B':
-					return message.channel.send(Fuse)
-				case 'G|C':
-					return message.channel.send(SupplyOrTransformer)
-				case 'H|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'H|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'I|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'I|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'I|C':
-					return message.channel.send(Pump)
-				case 'I|D':
-					return message.channel.send(DataConnector)
-				case 'J|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'J|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'J|C':
-					return message.channel.send(PumpFilterDataConnector)
-				case 'K|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'K|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'L|A':
-					return message.channel.send(SupplyOrTransformer)
-				case 'L|B':
-					return message.channel.send(SwitchOrFuse)
-				case 'L|C':
-					return message.channel.send(Pump)
-				default:
-					return message.channel.send(IssueIsImpossible)
-            }
-        }
-
+		function SanitizePartBySystem(part, systemName)
+		{
+			
+			if (
+				[parts.battery.name, parts.fuse.name, parts.power.name, parts.trans.name].indexOf(part) != -1 && 
+				[systems.gravity.name, systems.generator.name].indexOf(systemName) != -1
+			)
+				part += "HC "+part;
+			else if (part === parts.bottle.name)
+			{
+				switch(systemName){
+					case systems.scrubber.name: part="CO2 "+part;break;
+					case systems.recycler.name: part="CO2 and O2 "+part+"s";break;
+					case systems.oxygen.name: part="O2 "+part;break;
+					case systems.pressure.name: part="N2 "+part;break;
+					case systems.temperature.name: part="Liquid N2 "+part;break;
+				}
+			}
+			else if (part === parts.crt.name && (systemName === systems.beacon.name || systemName === systems.repair.name))
+				part="Round "+part;
+		
+			return part;
+		}
 		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
 			
 		}
+		function SanitizeFinalDesc (partsArray)
+		{
+			
+			var isPartBroken = false;
+			var brokenCrosscheckRef = [
+				parts.filter.name,
+				parts.alarms.name, 
+				parts.battery.name, 
+				parts.buzzer.name, 
+				parts.crt.name, 
+				parts.data.name, 
+				parts.fuse.name, 
+				parts.power.name, 
+				parts.switch.name, 
+				parts.trans.name, 
+				parts.proc.name, 
+				parts.pump.name];
+			var isPartLevelSufficient = false;
+			var levelSufficientCrosscheckRef = [parts.battery.name, parts.bottle.name];
+			
+			for (var i = 0; i < partsArray.length ; i++)
+			{
+				if(! (isPartBroken && isPartLevelSufficient))
+					if (brokenCrosscheckRef.indexOf(partsArray[i]) != -1 && !isPartBroken)
+					{
+						isPartBroken = true;
+					}
+					if( levelSufficientCrosscheckRef.indexOf(partsArray[i]) != -1 && !isPartLevelSufficient)
+					{
+						isPartLevelSufficient = true;
+					}
+				else
+				{
+					break;
+				}
+			}
 
-		
-		
+			var desc = "";
+			var tempDesc = "";
+			var sufficientPartsCounter = 0;
+			if( isPartBroken)
+			{
+				tempDesc = "If it's black then it's busted. "
+				if (desc != "")
+				{
+					tempDesc = " " + tempDesc;
+				}
+				desc += tempDesc;
+			}
+			if( isPartLevelSufficient)
+			{
+				tempDesc = "Check if the ";
+				var sufficientPartsText = "";
+				
+				for (var i =0 ; i < levelSufficientCrosscheckRef.length; i++)
+				{
+					if(partsArray.indexOf(levelSufficientCrosscheckRef[i]) != -1)
+					{
+						sufficientPartsCounter ++;
+				
+					}
+					
+				}
+			
 
+				for (var i =0 ; i < levelSufficientCrosscheckRef.length; i++)
+				{
+					if(partsArray.indexOf(levelSufficientCrosscheckRef[i]) != -1)
+					{
+						
+						if(sufficientPartsText == "")
+							sufficientPartsText += levelSufficientCrosscheckRef[i];
+						
+						else if (sufficientPartsText != "" && sufficientPartsCounter - 1 != 0)
+						{
+							sufficientPartsText +=", "+levelSufficientCrosscheckRef[i];
+						}
+						else if (sufficientPartsCounter - 1 == 0)
+						{
+							sufficientPartsText +=" and "+levelSufficientCrosscheckRef[i];
+						}
+
+						sufficientPartsCounter--;
+					}
+				}
+				tempDesc += sufficientPartsText + " levels are sufficient"; 
+				
+				desc += tempDesc;
+			}
+
+			return desc;
+		}
 	}
+
 }
