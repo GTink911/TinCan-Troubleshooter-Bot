@@ -4,6 +4,7 @@ var ResponseToCheckAgainst = 'DEBUG'
 
 var ReactionsString = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱";
 var ReactionsPlainString = "ABCDEFGHIJKL"
+//not really sure if this is worthit
 
 //need extra step for the split function to work zzz
 var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"];
@@ -18,41 +19,22 @@ var defaults = {
 	'bot': {
 		'discord': 'https://discord.gg/5fYBbRJDYS',
 	},
+	//partNames
 	'parts':{
-		'filter':'Air Filter',
-		'alarms': {
-			'c' : 'Caution Alarm',
-			'w' : 'Warning Alarm',
-		},
-		'battery' : {
-			's' : 'Large Battery',
-			'hc' : 'Large High Capacity Battery'
-		},
-		'bottle': {
-			'o2' : 'Oxygen Bottle',
-			'co2' : 'CO2 Bottle',
-			'n': 'Nitrogen Bottle',
-			'ln' : 'Liquid Nitrogen Bottle'
-		},
-		'buzzer': 'Buzzer',
-		'crt': 'CRT Monitor',
-		'data' : 'Data Connector',
-		'fan' : 'Fan',
-		'fuse' : {
-			's' : 'Fuse',
-			'hc' : 'High Capacity Fuse',
-		},
-		'power': {
-			's':'Power Connector',
-			'hc' : 'High Capacity Power Connector'
-		},
-		'switch' : 'switch',
-		'trans' : {
-			's' : 'Power Transformer',
-			'hc' : 'High Capacity Power Transformer'
-		},
-		'proc' : 'Processor',
-		'pump' : 'Pump',
+		'filter':{'name': 'Air Filter'},
+		'alarms': {'name': 'Alarms'},
+		'battery' : {'name':'Large Battery'},
+		'bottle':{'name': 'bottle'},
+		'buzzer': {'name':'Buzzer'},
+		'crt': {'name':'CRT Monitor'},
+		'data' : {'name':'Data Connector'},
+		'fan' : {'name':'Fan'},
+		'fuse' : {'name':'Fuse'},
+		'power': {'name':'Power Connector'},
+		'switch' : {'name':'Switch'},
+		'trans' : {'name':'Power Transformer'},
+		'proc' : {'name':'Processor'},
+		'pump' : {'name':'Pump'},
 	},
 	'system' : {
 		'generator': {'name':'Main Generator'},
@@ -67,165 +49,323 @@ var defaults = {
 		'pressure': {'name':'Pressure Stabilizer'},
 		'repair': {'name':'Repair Station'},
 		'temperature': {'name':'Temperature Manager'}
-	}
+	},
+	'errors':{},
 };
+defaults.getSystemByName = function(systemName){
+	var tempSystem = "";
+	for (var i=0; i< this.systemsList.length; i++)
+	{
+		if(this.systemsList[i].name == systemName)
+		{
+			tempSystem = this.systemsList[i];
+		}
+	}
+}
+var systems = defaults.system;
 defaults.systemsList = [
-	defaults.system.generator,
-	defaults.system.computer,
-	defaults.system.beacon,
-	defaults.system.scrubber,
-	defaults.system.recycler,
-	defaults.system.light,
-	defaults.system.charger,
-	defaults.system.gravity,
-	defaults.system.oxygen,
-	defaults.system.pressure,
-	defaults.system.repair,
-	defaults.system.temperature,
+	systems.generator,
+	systems.computer,
+	systems.beacon,
+	systems.scrubber,
+	systems.recycler,
+	systems.light,
+	systems.charger,
+	systems.gravity,
+	systems.oxygen,
+	systems.pressure,
+	systems.repair,
+	systems.temperature,
 ];
 var parts = defaults.parts; //so we can shortcut this 
-defaults.system.generator.parts = [
-	parts.alarms.c,
-	parts.alarms.w,
+
+defaults.partsList = [
+	parts.filter,
+	parts.alarms,
+	parts.battery,
+	parts.bottle,
 	parts.buzzer,
 	parts.crt,
 	parts.data,
-	parts.fuse.hc,
-	parts.power.hc,
+	parts.fan,
+	parts.fuse,
+	parts.power,,
 	parts.switch,
-	parts.trans.hc,
+	parts.trans,
+	parts.proc,
+	parts.pump
+];
+
+systems.generator.parts = [
+	parts.alarms,
+	parts.buzzer,
+	parts.crt,
+	parts.data,
+	parts.fuse,
+	parts.power,
+	parts.switch,
+	parts.trans,
 	parts.proc
 ];
-defaults.system.computer.parts=[
-	parts.alarms.c,
-	parts.alarms.w,
+systems.computer.parts=[
+	parts.alarms,
 	parts.crt,
 	parts.switch,
 	parts.buzzer,
 	parts.data,
 	parts.proc,
-	parts.battery.s,
-	parts.fuse.s,
-	parts.power.s,
-	parts.trans.s,
+	parts.battery,
+	parts.fuse,
+	parts.power,
+	parts.trans,
+	parts.fan
 ];
-defaults.system.beacon.parts=[
-	parts.power.s,
-	parts.trans.s,
-	parts.trans.fuse,
+systems.beacon.parts=[
+	parts.power,
+	parts.trans,
 	parts.data,
 	parts.crt,
-	parts.battery.s
+	parts.battery
 ];
-defaults.system.scrubber.parts=[
-	parts.alarms.w,
-	parts.alarms.c,
+systems.scrubber.parts=[
+	parts.alarms,
 	parts.crt,
 	parts.switch,
 	parts.filter,
-	parts.battery.s,
+	parts.battery,
 	parts.bottle,
 	parts.buzzer,
 	parts.data,
-	parts.fuse.s,
-	parts.power.s,
-	parts.trans.s,
-	parts.pump
+	parts.fuse,
+	parts.power,
+	parts.trans,
+	parts.pump,
+	parts.fan
 ];
-defaults.system.recycler.parts = [
+systems.recycler.parts = [
 	parts.bottle,
 	parts.switch,
-	parts.battery.s,
-	parts.fuse.s,
-	parts.trans.s,
+	parts.battery,
+	parts.fuse,
+	parts.trans,
 	parts.pump,
 ];
-defaults.system.light.parts = [
+systems.light.parts = [
 	parts.switch,
-	parts.battery.s,
-	parts.fuse.s,
-	parts.trans.s
+	parts.battery,
+	parts.fuse,
+	parts.trans
 ];
-defaults.system.charger.parts = [
+systems.charger.parts = [
 	parts.switch,
-	parts.power.s,
-	parts.fuse.s,
-	parts.trans.s
+	parts.power,
+	parts.fuse,
+	parts.trans
 ];
-defaults.system.gravity.parts = [
-	parts.alarms.c,
-	parts.alarms.w,
-	parts.battery.hc,
+systems.gravity.parts = [
+	parts.alarms,
+	parts.battery,
 	parts.buzzer,
 	parts.crt,
 	parts.data,
-	parts.fuse.hc,
-	parts.power.hc,
+	parts.fuse,
+	parts.power,
 	parts.switch,
-	parts.trans.hc,
+	parts.trans,
 	parts.processor
 ];
-defaults.systems.oxygen.parts = [
-	parts.alarms.c,
-	parts.alarms.w,
+systems.oxygen.parts = [
+	parts.alarms,
 	parts.crt,
 	parts.switch,
-	parts.battery.s,
+	parts.battery,
 	parts.bottle,
 	parts.buzzer,
 	parts.data,
-	parts.fuse.s,
-	parts.power.s,
-	parts.trans.s,
-	parts.pump
+	parts.fuse,
+	parts.power,
+	parts.trans,
+	parts.pump,
+	parts.fan
 ];
-defaults.system.pressure.parts = [
-	parts.alarms.w,
-	parts.alarms.c,
+systems.pressure.parts = [
+	parts.alarms,
 	parts.crt,
 	parts.switch,
 	parts.filter,
-	parts.battery.s,
-	parts.bottler,
-	parts.buzzer,
-	parts.data,
-	parts.fuse.s,
-	parts.power.s,
-	parts.trans.s,
-	parts.pump
-	
-];
-defaults.system.repair.parts = [
-	parts.alarms.c,
-	parts.alarms.w,
-	parts.crt,
-	parts.switch,
-	parts.battery.s,
-	parts.buzzer,
-	parts.data,
-	parts.fuse.s,
-	parts.power.s,
-	parts.trans.s
-];
-defaults.system.temperature.parts = [
-	parts.alarms.c,
-	parts.alarms.w,
-	parts.crt,
-	parts.switch,
-	parts.battery.s,
+	parts.battery,
 	parts.bottle,
 	parts.buzzer,
 	parts.data,
-	parts.fuse.s,
-	parts.power.s,
-	parts.trans.s,
+	parts.fuse,
+	parts.power,
+	parts.trans,
+	parts.pump,
+	parts.fan
+	
+];
+systems.repair.parts = [
+	parts.alarms,
+	parts.crt,
+	parts.switch,
+	parts.battery,
+	parts.buzzer,
+	parts.data,
+	parts.fuse,
+	parts.power,
+	parts.trans,
+	parts.fan
+];
+systems.temperature.parts = [
+	parts.alarms,
+	parts.crt,
+	parts.switch,
+	parts.battery,
+	parts.bottle.ln,
+	parts.buzzer,
+	parts.data,
+	parts.fuse,
+	parts.power,
+	parts.trans,
 	parts.pump
 ];
+var errors = defaults.errors;
+//initialize default errors
+function GetBlackList(systemsList,except,whiteList=false){
+	var tempArr=[];
+	for(var i = 0; i<systemsList.length; i++)
+	{
+		if(!whiteList)
+		{
+			if((except.indexOf(systemsList[i].name)!= -1) )
+			{
+				tempArr.push(systemsList[i].name);
+			}
+
+		}
+		else if (whiteList)
+		{
+			if(except.indexOf(systemsList[i].name)== -1)
+			{
+				tempArr.push(systemsList[i].name);
+			}
+		}	
+
+	}
+	return tempArr;
+};
+
+
+
+errors.production = {'name':'production','blackList':GetBlackList(
+	defaults.systemsList,
+	[
+		systems.computer.name,
+		systems.beacon.name,
+		systems.light.name,
+		systems.repair.name
+	]
+)};
+errors.noHiss = {'name':'noHiss','blackList':[]};
+errors.retriggering = {'name':'retriggering','blackList':[]};
+errors.buzzerNoise = {'name':'buzzerNoise','blackList':[]};
+errors.flickering = {'name':'flickering','blackList':[systems.repair.name, systems.beacon.name]};
+errors.nonsenseData = {'name':'nonsenseData','blackList':[]};
+errors.lowPower = {'name':'lowPower','blackList':[]};
+errors.blow = {'name':'blow','blackList':[]};
+errors.noPower = {'name':'noPower','blackList':[]};
+errors.trigger = {'name':'trigger','blackList':[]};
+errors.red = {'name':'red','blackList':[]};
+errors.highPower = {'name':'highPower','blackList':GetBlackList(defaults.systemsList,[systems.generator.name],true)};
+errors.highGrav = {'name':'highGrav','blackList':GetBlackList(defaults.systemsList,[systems.gravity.name],true)};
+
+//initialize part issues here
+parts.filter.issues= [errors.production, errors.noHiss];
+parts.alarms.issues= [errors.retriggering];
+parts.battery.issues=[];
+parts.bottle.issues= [errors.production];
+parts.buzzer.issues= [errors.buzzerNoise];
+parts.crt.issues = [errors.flickering];
+parts.data.issues = [errors.production,errors.nonsenseData];
+parts.fan.issues = [errors.lowPower];
+parts.fuse.issues = [errors.blow];
+parts.power.issues = [errors.noPower,errors.lowPower, errors.production];
+parts.switch.issues=[errors.trigger];
+parts.trans.issues = [errors.red,errors.noPower,errors.highPower];
+parts.proc.issues= [errors.highGrav,errors.highPower];
+parts.pump.issues = [errors.production];
+
+
 //add systems parts here
 module.exports = {
 	name: 'troubleshoot',
 	description: 'Start troublehooting a problem in your Tin Can!',
 	execute(message, args, client, config, Discord) {
+
+		class DCME{
+			constructor()
+			{
+				this.color = defaults.color;
+				this.title = "";
+				this.author= [];
+				this.desc="";
+				this.fields=[];
+				this.footer=[];
+				this.defaultColor = true;
+				this.defaultFields = true;
+				this.fieldsInline = false;
+			}
+			create(){
+				var ret = new Discord.MessageEmbed();
+				if (this.color !== "")
+				{
+					ret.setColor(this.color);
+				}
+				if (this.title !== "")
+				{
+					ret.setTitle(this.title);
+				}
+				if (this.author.length !== 0)
+				{
+					ret.setAuthor(this.author[0],this.author[1],this.author[2]);
+				}
+				if ( this.desc !== "") 
+				{
+					ret.setDescription = this.desc;
+				}
+				if(!this.defaultFields)
+				{
+					var val_i = "'React with :regional_indicator_";
+
+					for(var i=0; i< this.fields.length; i++)
+					{
+						//console.log({name:this.fields[i].name, value:this.fields[i].value,inline:this.fieldsInline});
+						ret.addField(this.fields[i], (val_i+(ReactionsPlainStringArr[i].toLocaleLowerCase())+":!"), this.fieldsInline);
+					}
+				}
+				if ( this.fields.length >= 1)
+				{
+					//do some looping logic here
+				}
+				ret.setTimestamp();
+				if ( this.footer.length >= 1)
+				{
+					ret.setFooter(this.footer[0], this.footer[1]);
+				}
+				return ret;
+			}
+			setColor(color)
+			{
+				this.color = color;
+				this.defaultColor = false;
+			}
+			setFields(fields,inline=false){
+				this.fields = fields;
+				this.defaultFields = false;
+				this.fieldsInline = inline
+			}
+		}
+		
 
 		const filter = (reaction, user) => {
 			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
@@ -233,27 +373,6 @@ module.exports = {
 
 		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
 
-		const StarterEmbed = new Discord.MessageEmbed()
-			.setColor('#58b9ff')
-			.setTitle('Looks like its time to play another game of... \n***Troubleshooting Mania!***')
-			.setAuthor('Need help with the bot? Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/5fYBbRJDYS')
-			.setDescription('Thanks for playing! What system are you having troubles with, my lad/ladess?')
-			.addFields(
-				{ name: 'Main Generator', value: 'React with :regional_indicator_a:!', inline: true },
-				{ name: 'Main Computer', value: 'React with :regional_indicator_b:!', inline: true },
-				{ name: 'Rescue Beacon', value: 'React with :regional_indicator_c:!', inline: true },
-				{ name: 'CO2 Scrubber', value: 'React with :regional_indicator_d:!', inline: true },
-				{ name: 'CO2 to O2 Station', value: 'React with :regional_indicator_e:!', inline: true },
-				{ name: 'Lighting Systems', value: 'React with :regional_indicator_f:!', inline: true },
-				{ name: 'Battery Charger', value: 'React with :regional_indicator_g:!', inline: true },
-				{ name: 'Gravity Generator', value: 'React with :regional_indicator_h:!', inline: true },
-				{ name: 'O2 Generator', value: 'React with :regional_indicator_i:!', inline: true },
-				{ name: 'Pressure Stabilizer', value: 'React with :regional_indicator_j:!', inline: true },
-				{ name: 'Repair Station', value: 'React with :regional_indicator_k:!', inline: true },
-				{ name: 'Temperature Manager', value: 'React with :regional_indicator_l:!', inline: true },
-			)
-			.setTimestamp()
-			.setFooter('Remember, you can pause your game while using the bot!', 'https://i.imgur.com/3Bvt2DV.png');
 
 		const ProblemEmbed = new Discord.MessageEmbed()
 			.setColor('#58b9ff')
@@ -369,7 +488,25 @@ module.exports = {
 		StartTroubleshoot();
 
 		function StartTroubleshoot() {
-			message.channel.send(StarterEmbed).then(async sentMessage => {
+			//create starterEmbed here
+			let tempStarterEmbed = new DCME();
+			tempStarterEmbed.title="Looks like its time to play another game of... \n***Troubleshooting Mania!***";
+			tempStarterEmbed.author=["Need help with the bot? Join our Discord!", defaults.tincan.logo, defaults.bot.discord];
+			tempStarterEmbed.desc = "Thanks for playing! What system are you having troubles with, my lad/ladess?";
+
+			var tempfields=[];
+			
+			for(var i=0; i<defaults.systemsList.length;i++)
+			{
+				tempfields.push(defaults.systemsList[i].name);
+			}
+			
+			tempStarterEmbed.setFields(tempfields,true);
+			//
+			message.channel.send(
+				
+				tempStarterEmbed.create()
+				).then(async sentMessage => {
 
 				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
 				ReactionCollector.on('end', (collected, reason) => {
@@ -379,14 +516,12 @@ module.exports = {
 
 						const userReaction = collected.array()[0];
 						const response = userReaction._emoji.name;
-
-						// Is it possible to always have this trigger the WhatIsProblem function, unless the default (error handling) case is triggered? Would cut down on some code
 						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response) 
 						if ( ReactionsStringResponseIndex != -1)
 						{
 							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-							return WhatIsProblem();
-						}
+							return WhatIsProblem(ReactionsStringResponseIndex);
+						}	
 						else{
 							YouBrokeTheBotFunct()//
 						}
@@ -394,9 +529,7 @@ module.exports = {
 
 					}
 				});
-				//since we display per system
-				//converts it to unicode zzz
-
+			
 				for( var i=0 ; i < defaults.systemsList.length; i++)
 				{
 					
@@ -405,13 +538,165 @@ module.exports = {
 				
 			
 			});
-		}
 
-		function WhatIsProblem() {
+		}
+		function CreateFieldsForSystems(systemIndex)
+		{
+			var issuesArray = [];
+			var partsArray = [];
+			//get the system parts
+			var tempSystem = defaults.systemsList[systemIndex]
+			var tempSystemParts = tempSystem.parts;
+			var allParts = defaults.partsList;
+			
+			for( var i=0; i< allParts.length; i++) //using defaults.parts instead so its orderly
+			{
+				var partIndex = tempSystemParts.indexOf(allParts[i]);
+				if( partIndex!= -1)
+				{
+					var tempPart = allParts[i];
+				
+					for ( var j=0; j<tempPart.issues.length; j++)
+					{
+						var currentIssue = tempPart.issues[j];
+						
+						//check if not blacklisted
+						if(currentIssue.blackList.indexOf(tempSystem.name) == -1)
+						{
+							if(issuesArray.indexOf(tempPart.issues[j].name) == -1)//not added
+							{
+	
+								issuesArray.push(currentIssue.name);
+								partsArray.push([])
+							}
+							var issueIndex = issuesArray.indexOf(currentIssue.name);
+							//add said part on a set off issue arrays
+							
+							partsArray[issueIndex].push(tempPart.name)
+						}
+						
+					}
+				}
+				
+			}
+			var fieldsList= [];
+			for (var i = 0 ; i<issuesArray.length; i++)
+			{
+				fieldsList.push({'issue':issuesArray[i],'parts':partsArray[i]});
+			}
+			return {'name':tempSystem.name,'fields':fieldsList};
+		
+		}
+		function WhatIsProblem(systemIndex) {
+			
 
 			if (StarterResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
+			
+			var systemObj = CreateFieldsForSystems(systemIndex);
+			let tempProblemEmbed = new DCME();
+			tempProblemEmbed.title = 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?';
+			tempProblemEmbed.author = ['List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+			tempProblemEmbed.desc = 'What problem are you having with the system?';
+			var tempFields = [];
+			var fieldText;
+			var error;
+			for( var i = 0 ; i < systemObj.fields.length; i++)
+			{
+				fieldText= "";
+				error = systemObj.fields[i];
+				switch(error.issue)
+				{
+					case errors.production.name:
+						
+						switch(systemObj.name)
+						{
+							case systems.generator.name: 
+								fieldText = "Producing Low Power"
+							break;
+							case systems.scrubber.name:
+								fieldText = "CO2 levels rising"
+							break;
+							case systems.recycler.name:
+								fieldText = "Slow gas recycling"
+							break;
+							case systems.charger.name:
+								fieldText = "Slow battery charging"
+							break;
+							case systems.gravity.name:
+								fieldText = "Unstable gravity uptime"
+							break;
+							case systems.oxygen.name:
+								fieldText = "O2 levels dropping"
+							break;
+							case systems.pressure.name:
+								fieldText = "Slow atmospheric stabilization"
+							break;
+							case systems.temperature.name:
+								fieldText = "Slow temperature stabilization"
+							break;
+						}
 
-			message.channel.send(ProblemEmbed).then(async sentMessage => {
+					break;
+					case errors.noHiss.name: 
+						fieldText = "No hissing sound";
+					break;
+					case errors.retriggering.name:
+						fieldText = "Alarms re-triggering after a few seconds after turning off";	
+					break;
+					case errors.buzzerNoise.name: 
+						fieldText = "Unusual buzzer sound pattern";
+					break;
+					case errors.flickering.name: 
+						fieldText = "CRT Monitor flickering"
+					break;
+
+					case errors.nonsenseData.name:
+						fieldText= "Dispalys unstable/unreadable data"
+					break;
+					case errors.lowPower.name:
+						fieldText ="Turned on switch has lights but monitor is off";
+						if(error.parts.indexOf(defaults.parts.fan) != -1)
+							fieldText += " and fan spins slow"
+						
+					break;
+					case errors.blow.name: 
+						fieldText ="When turned on, will make a loud sound and switch off immediately";
+					break;
+					case errors.noPower.name:
+						fieldText = "When turned on, stays on but no system lights";	
+					break;
+					case errors.trigger.name:
+						fieldText = "It's hard to turn the switch to on or to off";	
+					break;
+
+					case errors.red.name:
+						fieldText ="The transformer glows red"	
+					break;
+					case errors.highPower.name:
+						fieldText = "Producing more than necesarry"	
+					break;
+					case errors.highGrav.name:
+						fieldText = "The gravity generator is producing higher amounts of gravity"	
+					break;
+
+				}
+				tempFields.push(fieldText)
+			}
+			tempProblemEmbed.setFields(tempFields)
+			
+			message.channel.send(
+				tempProblemEmbed.create()
+			).then(
+				async sentMessage =>{
+					for( var i=0 ; i < systemObj.fields.length; i++)
+					{
+						
+						await sentMessage.react(ReactionsStringArr[i])
+					}
+
+				}
+			);
+			/* message.channel.send(ProblemEmbed).then(async sentMessage => {
 				await sentMessage.react('🇦')
 				await sentMessage.react('🇧')
 				await sentMessage.react('🇨')
@@ -453,7 +738,7 @@ module.exports = {
 						}
 					}
 				});
-			});
+			}); */
 		}
 
 		function FindProblem() {
@@ -533,35 +818,11 @@ module.exports = {
 
 		async function YouBrokeTheBotFunct() {
 			message.channel.send(YouBrokeTheBot)
-			// For some reason, when using the below variable only "ProblemResponsePlaintext", "ResponseToCheckAgainst", and "Author" get logged. The first variable, and the text before it, are completely removed. I replaced this with a temporary workaround for now.
-			/*
-			var DebugMessageToSend = ('A major error occurred. Available details have been logged below: \nStarterResponsePlaintext: ' + StarterResponsePlaintext, '\nProblemResponsePlaintext: ' + ProblemResponsePlaintext + '\nResponseToCheckAgainst: ' + ResponseToCheckAgainst + '\nAuthor: ' + message.author.id);
-
-			// This logs the error to a private channel in the troubleshooting Discord
-			try {
-				const privateloggingchannel = client.channels.cache.get('826545941355560960')
-
-				// privateloggingchannel.send(DebugMessagetoSend)
-
-				privateloggingchannel.send('A major error occurred. Available details have been logged below:')
-				privateloggingchannel.send('StarterResponsePlaintext: ' + StarterResponsePlaintext)
-				privateloggingchannel.send('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
-				privateloggingchannel.send('ResponseToCheckAgainst: ' + ResponseToCheckAgainst)
-				privateloggingchannel.send('Author: ' + message.author.id)
-
-			} catch (Exception) {
-				await console.log('Couldn\'t send error message to the error channel. Sending here instead.')
-				await console.log('')
-				await console.error(Exception)
-				await console.log('')
-				await console.log('A major error occurred. Available details have been logged below:')
-				await console.log('StarterResponsePlaintext: ' + StarterResponsePlaintext)
-				await console.log('ProblemResponsePlaintext: ' + ProblemResponsePlaintext)
-				await console.log('ResponseToCheckAgainst: ' + ResponseToCheckAgainst)
-				await console.log('Author: ' + message.author.id)
-
-				// await console.error(DebugMessageToSend);
-            }*/
+			
 		}
+
+		
+		
+
 	}
 }
