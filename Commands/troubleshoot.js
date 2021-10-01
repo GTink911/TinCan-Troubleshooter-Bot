@@ -334,7 +334,7 @@ module.exports = {
 				
 				if(!this.defaultFields)
 				{
-					var val_i = "'React with :regional_indicator_";
+					var val_i = "React with :regional_indicator_";
 
 					for(var i=0; i< this.fields.length; i++)
 					{
@@ -539,7 +539,7 @@ module.exports = {
 					break;
 
 					case errors.nonsenseData.name:
-						fieldText= "Dispalys unstable/unreadable data"
+						fieldText= "Displays unstable/unreadable data"
 					break;
 					case errors.lowPower.name:
 						fieldText ="Turned on switch has lights but monitor is off";
