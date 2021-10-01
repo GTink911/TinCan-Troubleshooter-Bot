@@ -1,7 +1,4 @@
 ﻿var StarterResponsePlaintext = 'DEBUG'
-var ProblemResponsePlaintext = 'DEBUG'
-var ResponseToCheckAgainst = 'DEBUG'
-
 var ReactionsString = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱";
 var ReactionsPlainString = "ABCDEFGHIJKL"
 //not really sure if this is worthit
@@ -267,7 +264,7 @@ errors.production = {'name':'production','blackList':GetBlackList(
 		systems.repair.name
 	]
 )};
-errors.noHiss = {'name':'noHiss','blackList':[]};
+/* errors.noHiss = {'name':'noHiss','blackList':[]}; */
 errors.retriggering = {'name':'retriggering','blackList':[]};
 errors.buzzerNoise = {'name':'buzzerNoise','blackList':[]};
 errors.flickering = {'name':'flickering','blackList':[systems.repair.name, systems.beacon.name]};
@@ -281,7 +278,7 @@ errors.highPower = {'name':'highPower','blackList':GetBlackList(defaults.systems
 errors.highGrav = {'name':'highGrav','blackList':GetBlackList(defaults.systemsList,[systems.gravity.name],true)};
 
 //initialize part issues here
-parts.filter.issues= [errors.production, errors.noHiss];
+parts.filter.issues= [errors.production/*, errors.noHiss */];
 parts.alarms.issues= [errors.retriggering];
 parts.battery.issues=[errors.production];
 parts.bottle.issues= [errors.production];
@@ -295,7 +292,6 @@ parts.switch.issues=[errors.trigger];
 parts.trans.issues = [errors.red,errors.noPower,errors.highPower];
 parts.proc.issues= [errors.highGrav,errors.highPower];
 parts.pump.issues = [errors.production];
-
 
 //add systems parts here
 module.exports = {
@@ -401,12 +397,11 @@ module.exports = {
 				).then(async sentMessage => {
 				
 				ReactionLength = defaults.systemsList.length;
-				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
+				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
 				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					}else {
-
 						const userReaction = collected.array()[0];
 						const response = userReaction._emoji.name;
 						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response) 
@@ -418,14 +413,24 @@ module.exports = {
 						else{
 							YouBrokeTheBotFunct()//
 						}
-						
-
 					}
 				});
 				for( var i=0 ; i < defaults.systemsList.length; i++)
 				{
-					
-					await sentMessage.react(ReactionsStringArr[i])
+					try {
+						sentMessage.react(ReactionsStringArr[i])
+					} catch (e) {
+						const MessageNotFound = new MessageEmbed()
+							.setColor(defaults.color)
+							.setTitle('Uh Oh!')
+							.setAuthor('Looks like automod deleted something!')
+							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for the bot to continue using it :)')
+							.setThumbnail(defaults.tincan)
+							.setTimestamp()
+
+						// Avoiding a crash due to message being deleted
+						message.channel.send(MessageNotFound)
+                    }
 				}
 			});
 
@@ -525,9 +530,11 @@ module.exports = {
 						}
 
 					break;
+					/*
 					case errors.noHiss.name: 
 						fieldText = "No hissing sound";
 					break;
+					*/
 					case errors.retriggering.name:
 						fieldText = "Alarms re-triggering after a few seconds after turning off";	
 					break;
@@ -561,7 +568,7 @@ module.exports = {
 						fieldText ="The transformer glows red"	
 					break;
 					case errors.highPower.name:
-						fieldText = "Producing more than necesarry"	
+						fieldText = "Producing more than necessary"	
 					break;
 					case errors.highGrav.name:
 						fieldText = "The gravity generator is producing higher amounts of gravity"	
@@ -577,7 +584,7 @@ module.exports = {
 			).then(
 				async sentMessage =>{
 					
-					const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 30000 });
+					const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
 					ReactionCollector.on('end',(collected, reason) => {
 						if (reason === 'time'){
 							sentMessage.channel.send('Uh oh- you timed out!');
@@ -632,13 +639,14 @@ module.exports = {
 
 		function SanitizePartBySystem(part, systemName)
 		{
-			
+			/*
 			if (
 				[parts.battery.name, parts.fuse.name, parts.power.name, parts.trans.name].indexOf(part) != -1 && 
 				[systems.gravity.name, systems.generator.name].indexOf(systemName) != -1
 			)
 				part += "HC "+part;
-			else if (part === parts.bottle.name)
+			*/
+			if (part === parts.bottle.name)
 			{
 				switch(systemName){
 					case systems.scrubber.name: part="CO2 "+part;break;
@@ -654,7 +662,15 @@ module.exports = {
 			return part;
 		}
 		async function YouBrokeTheBotFunct() {
-			message.channel.send(YouBrokeTheBot)
+
+			const YouBrokeTheBot = new Discord.MessageEmbed()
+				.setTitle('Great job, you broke the bot!')
+				.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+				.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) :)')
+				.setTimestamp()
+				.setFooter('Thanks for using the Tin Can Troubleshooter!')
+
+			return message.channel.send(YouBrokeTheBot)
 			
 		}
 		function SanitizeFinalDesc (partsArray)
