@@ -397,40 +397,47 @@ module.exports = {
 				).then(async sentMessage => {
 				
 				ReactionLength = defaults.systemsList.length;
+
 				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
 				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
-					}else {
+					} else if (reason === 'limit') {
 						const userReaction = collected.array()[0];
 						const response = userReaction._emoji.name;
-						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response) 
-						if ( ReactionsStringResponseIndex != -1)
-						{
+						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+
+						if (ReactionsStringResponseIndex != -1) {
 							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
 							return WhatIsProblem(ReactionsStringResponseIndex);
-						}	
-						else{
-							YouBrokeTheBotFunct()//
 						}
-					}
-				});
-				for( var i=0 ; i < defaults.systemsList.length; i++)
-				{
-					try {
-						sentMessage.react(ReactionsStringArr[i])
-					} catch (e) {
-						const MessageNotFound = new MessageEmbed()
+						else {
+							YouBrokeTheBotFunct()
+						}
+					} else if (reason === 'messageDeleted') {
+						const MessageNotFound = new Discord.MessageEmbed()
 							.setColor(defaults.color)
-							.setTitle('Uh Oh!')
-							.setAuthor('Looks like automod deleted something!')
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for the bot to continue using it :)')
-							.setThumbnail(defaults.tincan)
+							.setTitle('Looks like automod deleted something!')
+							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
 							.setTimestamp()
-
 						// Avoiding a crash due to message being deleted
-						message.channel.send(MessageNotFound)
+						return message.channel.send(MessageNotFound)
                     }
+				});
+				try {
+					for (var i = 0; i < defaults.systemsList.length; i++) {
+						await sentMessage.react(ReactionsStringArr[i])
+					}	
+				} catch (e) {
+					const MessageNotFound = new Discord.MessageEmbed()
+						.setColor(defaults.color)
+						.setTitle('Looks like automod deleted something!')
+						.setAuthor('Uh Oh!', `${defaults.tincan.logo}`)
+						.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
+						.setTimestamp()
+					// Avoiding a crash due to message being deleted
+					message.channel.send(MessageNotFound)
 				}
 			});
 
