@@ -1,3 +1,5 @@
+// NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
+
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('./config.json');
@@ -24,7 +26,6 @@ client.on('message', async message => {
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
-
 	await command.execute(message, args, client, config, Discord)
 });
 
