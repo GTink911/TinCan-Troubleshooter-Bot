@@ -25,7 +25,6 @@ client.on('message', async message => {
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-	
 	if (!command) return;
 
 	await command.execute(message, args, client, config, Discord)

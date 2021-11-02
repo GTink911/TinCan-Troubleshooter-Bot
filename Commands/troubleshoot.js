@@ -399,7 +399,9 @@ module.exports = {
 				ReactionLength = defaults.systemsList.length;
 
 				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
-				ReactionCollector.on('end', (collected, reason) => {
+				
+				var a = ReactionCollector.on('end', (collected, reason) => {
+					
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					} else if (reason === 'limit') {
@@ -414,31 +416,58 @@ module.exports = {
 						else {
 							YouBrokeTheBotFunct()
 						}
-					} else if (reason === 'messageDeleted') {
+					} else if (reason === 'messageDelete') {
+						// Avoiding a crash due to message being deleted
 						const MessageNotFound = new Discord.MessageEmbed()
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
 							.setTimestamp()
-						// Avoiding a crash due to message being deleted
-						return message.channel.send(MessageNotFound)
+						return message.channel.send(MessageNotFound);
                     }
-				});
-				try {
-					for (var i = 0; i < defaults.systemsList.length; i++) {
-						await sentMessage.react(ReactionsStringArr[i])
-					}	
-				} catch (e) {
-					const MessageNotFound = new Discord.MessageEmbed()
+					else
+					{
+						// Avoiding a crash due to something not catched
+						const MessageNotFound = new Discord.MessageEmbed()
 						.setColor(defaults.color)
-						.setTitle('Looks like automod deleted something!')
-						.setAuthor('Uh Oh!', `${defaults.tincan.logo}`)
-						.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
-						.setTimestamp()
-					// Avoiding a crash due to message being deleted
-					message.channel.send(MessageNotFound)
-				}
+						.setTitle('Looks like something went wrong!')
+						.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+						.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
+						.setTimestamp();
+						
+						return message.channel.send(MessageNotFound);
+					}
+					
+				});
+				//need to do something with this section. very offputting
+				for (var i = 0; i < defaults.systemsList.length; i++) {
+						
+					try {
+						await sentMessage.react(ReactionsStringArr[i])
+					}
+					catch (e) {
+						if(e.code === Discord.Constants.APIErrors.UNKNOWN_MESSAGE)
+						{
+							break;
+						}
+						else
+						{
+							//should be used to handle unexpected errors in the future.
+							const MessageNotFound = new Discord.MessageEmbed()
+							.setColor(defaults.color)
+							.setTitle('Error')
+							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+							.setDescription("Error:"+e)
+							.setTimestamp()
+							message.channel.send(MessageNotFound)
+						}
+						
+						
+					}
+
+				}	
+				
 			});
 
 		}
@@ -596,8 +625,7 @@ module.exports = {
 						if (reason === 'time'){
 							sentMessage.channel.send('Uh oh- you timed out!');
 						}
-						else
-						{
+						else if (reason === 'limit'){
 							const userReaction = collected.array()[0];
 						
 							const response = userReaction._emoji.name;
@@ -632,12 +660,51 @@ module.exports = {
 							finalEmbed.desc = SanitizeFinalDesc(issueParts);
 							message.channel.send(finalEmbed.create());
 						}
+						else if (reason === 'messageDeleted'){
+							// Avoiding a crash due to message being deleted
+							const MessageNotFound = new Discord.MessageEmbed()
+							.setColor(defaults.color)
+							.setTitle('Looks like automod deleted something!')
+							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
+							.setTimestamp();
+							return message.channel.send(MessageNotFound);
+						}
+						else {
+							// Avoiding a crash due to something not catched
+							const MessageNotFound = new Discord.MessageEmbed()
+							.setColor(defaults.color)
+							.setTitle('Looks like something went wrong!')
+							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
+							.setTimestamp();
+							
+							return message.channel.send(MessageNotFound);
+						}
 					});
 					for( var i=0 ; i < systemObj.fields.length; i++)
 					{
-						await sentMessage.react(ReactionsStringArr[i])
+						try{
+							await sentMessage.react(ReactionsStringArr[i])
+						}
+						catch(e){
+							if(e.code === Discord.Constants.APIErrors.UNKNOWN_MESSAGE)
+							{
+								break;
+							}
+							else
+							{
+								//should be used to handle unexpected errors in the future.
+								const MessageNotFound = new Discord.MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Error')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription("Error:"+e)
+								.setTimestamp()
+								message.channel.send(MessageNotFound)
+							}
+						}	
 					}
-					
 				}
 			);
 			
