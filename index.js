@@ -19,13 +19,18 @@ client.once('ready', () => {
 
 client.on('message', async message => {
 
+	// KNOWN ISSUE: Bot will NOT convert command names to lowercase in order to match with below code. All "name" values in command files **must be in lowercase**. If anyone knows how to fix I'd appreciate it. -GTink911
+
 	if (message.author.bot) return;
 
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
+<<<<<<< HEAD
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 	if (!command) return;
+=======
+>>>>>>> GTLINK/help-command-update
 
 	await command.execute(message, args, client, config, Discord)
 });
