@@ -1,5 +1,3 @@
-// NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
-
 const fs = require('fs');
 const Discord = require('discord.js');
 const config = require('./config.json');
@@ -19,14 +17,13 @@ client.once('ready', () => {
 
 client.on('message', async message => {
 
+	// KNOWN ISSUE: Bot will NOT convert command names to lowercase in order to match with below code. All "name" values in command files **must be in lowercase**. If anyone knows how to fix I'd appreciate it. -GTink911
+
 	if (message.author.bot) return;
 
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
-		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-	
-	if (!command) return;
 
 	await command.execute(message, args, client, config, Discord)
 });

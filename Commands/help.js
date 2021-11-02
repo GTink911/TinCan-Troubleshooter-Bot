@@ -1,45 +1,31 @@
-// As you might be able to guess, I'm clueless about what this code does. All I know is that it works :)
-
-const { prefix } = require('../config.json');
+// KNOWN ISSUE: Bot will NOT convert command names to lowercase. All "name" values in command files **must be in lowercase**. If anyone knows how to fix I'd appreciate it since that means we can format the Help command with uppercase. -GTink911
 
 module.exports = {
 	name: 'help',
 	description: 'List all commands or info about a specific command.',
-	execute(message, args, client, config) {
-		const data = [];
+	execute(message, args, client, config, Discord) {
 		const { commands } = message.client;
+		let CommandsArray = Array.from(commands.keys());
 
-		if (!args.length) {
-			data.push('Here\'s a list of all my commands:');
-			data.push(commands.map(command => command.name).join(', '));
-			data.push(`\nYou can send \`${prefix}help [command name]\` to get info on a specific command!`);
+		const HelpMessage = new Discord.MessageEmbed()
+			.setColor('#58b9ff')
+			.setTitle('Here\'s a list of all my commands:')
+			.setAuthor('Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/5fYBbRJDYS')
+			.setTimestamp()
+			.setFooter('Use ![command] to use a command!');
 
-			return message.author.send(data, { split: true })
-				.then(() => {
-					if (message.channel.type === 'dm') return;
-					message.reply('I\'ve sent you a DM with all my commands!');
-				})
-				.catch(error => {
-					console.error(`Could not send help DM to ${message.author.tag}.\n`, error);
-					message.reply('Uh oh - looks like I can\'t DM you! Please verify you have allowed DMs from server members and try again :-)');
-				});
+		for (var i = 1; i < CommandsArray.length; i++) {
+			const command = commands.get(CommandsArray[i])
+			HelpMessage.addField(`${CommandsArray[i]}`, `${command.description}`, false)
 		}
 
-		const name = args[0].toLowerCase();
-		const command = commands.get(name) || commands.find(c => c.aliases && c.aliases.includes(name));
-
-		if (!command) {
-			return message.reply('that\'s not a valid command!');
-		}
-
-		data.push(`**Name:** ${command.name}`);
-
-		if (command.aliases) data.push(`**Aliases:** ${command.aliases.join(', ')}`);
-		if (command.description) data.push(`**Description:** ${command.description}`);
-		if (command.usage) data.push(`**Usage:** ${prefix}${command.name} ${command.usage}`);
-
-		data.push(`**Cooldown:** ${command.cooldown || 3} second(s)`);
-
-		message.channel.send(data, { split: true });
+		return message.author.send(HelpMessage)
+			.then(() => {
+				if (message.channel.type === 'dm') return;
+				message.channel.send('I\'ve sent you a DM with all my commands!');
+			})
+			.catch(error => {
+				message.channel.send(HelpMessage)
+			});
 	},
 };
