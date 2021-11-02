@@ -26,12 +26,6 @@ client.on('message', async message => {
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
-<<<<<<< HEAD
-		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-	if (!command) return;
-=======
->>>>>>> GTLINK/help-command-update
-
 	await command.execute(message, args, client, config, Discord)
 });
 
