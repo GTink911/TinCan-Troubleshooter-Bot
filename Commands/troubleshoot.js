@@ -386,23 +386,21 @@ module.exports = {
 			}
 			
 			tempStarterEmbed.setFields(tempfields,true);
-			//
+
 			message.channel.send(
 				
 				{ embeds: [tempStarterEmbed.create()] }
 				).then(async sentMessage => {
 				ReactionLength = defaults.systemsList.length;
 
-				const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 60000 });
+				const ReactionCollector = sentMessage.createReactionCollector({filter, maxEmojis: 1, time: 60000 });
 				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
-						console.log(collected)
 					} else if (reason === 'limit') {
 						const userReaction = collected.array()[0];
 						const response = userReaction._emoji.name;
 						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
-						console.log('successfully collected')
 						if (ReactionsStringResponseIndex != -1) {
 							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
 							return WhatIsProblem(ReactionsStringResponseIndex);
