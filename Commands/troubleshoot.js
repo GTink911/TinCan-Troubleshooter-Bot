@@ -4,7 +4,7 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
-var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"];
+var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"]; 
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
 const { MessageEmbed } = require('discord.js');
 
@@ -362,10 +362,11 @@ module.exports = {
 		}
 		
 
-		const filter = (reaction, user) => {
+		const filter = (reaction, user) => { return user.id === message.author.id;} 
+			//console.log(reaction.emoji.name);
+			//return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
 			
-			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
-		};
+		
 
 		// Sending the starting embed
 
@@ -386,28 +387,44 @@ module.exports = {
 			}
 			
 			tempStarterEmbed.setFields(tempfields,true);
-
+			
 			message.channel.send(
 				
 				{ embeds: [tempStarterEmbed.create()] }
 				).then(async sentMessage => {
 				ReactionLength = defaults.systemsList.length;
 
-				const ReactionCollector = sentMessage.createReactionCollector({filter, maxEmojis: 1, time: 60000 });
-				ReactionCollector.on('end', (collected, reason) => {
+				const ReactionCollector = sentMessage.createReactionCollector({
+					filter,
+					max : 1,
+					time : 1000 * 60,
+				});
+				ReactionCollector.on('end', (collected, reason,) => {
+					
+					
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					} else if (reason === 'limit') {
-						const userReaction = collected.array()[0];
-						const response = userReaction._emoji.name;
-						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
-						if (ReactionsStringResponseIndex != -1) {
-							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-							return WhatIsProblem(ReactionsStringResponseIndex);
-						}
-						else {
-							YouBrokeTheBotFunct()
-						}
+						
+						collected.forEach( (message) => {
+							
+
+							
+					
+							const response = message._emoji.name;
+							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+							if (ReactionsStringResponseIndex != -1) {
+								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+								return WhatIsProblem(ReactionsStringResponseIndex);
+							}
+							else {
+								YouBrokeTheBotFunct()
+							}
+
+						});
+						/*
+						
+						}*/
 					} else if (reason === 'messageDelete') {
 						// Avoiding a crash due to message being deleted
 						const MessageNotFound = new MessageEmbed()
@@ -459,6 +476,9 @@ module.exports = {
 				}	
 				
 			});
+
+			
+			
 
 		}
 		function CreateFieldsForSystems(systemIndex)
