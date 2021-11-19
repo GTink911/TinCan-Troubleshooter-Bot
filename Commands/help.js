@@ -3,11 +3,14 @@
 module.exports = {
 	name: 'help',
 	description: 'List all commands or info about a specific command.',
-	execute(message, args, client, config, Discord) {
+	execute(message) {
+
+		const { MessageEmbed } = require('discord.js');
+
 		const { commands } = message.client;
 		let CommandsArray = Array.from(commands.keys());
 
-		const HelpMessage = new Discord.MessageEmbed()
+		const HelpMessage = new MessageEmbed()
 			.setColor('#58b9ff')
 			.setTitle('Here\'s a list of all my commands:')
 			.setAuthor('Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/5fYBbRJDYS')
@@ -19,9 +22,9 @@ module.exports = {
 			HelpMessage.addField(`${CommandsArray[i]}`, `${command.description}`, false)
 		}
 
-		return message.author.send(HelpMessage)
+		return message.author.send({ embeds: [HelpMessage] })
 			.then(() => {
-				if (message.channel.type === 'dm') return;
+				if (message.channel.type === 'DM') return;
 				message.channel.send('I\'ve sent you a DM with all my commands!');
 			})
 			.catch(error => {

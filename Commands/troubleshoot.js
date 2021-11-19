@@ -4,9 +4,9 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
-var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"];
+var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"]; 
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
-var ReactionLength = 0;
+const { MessageEmbed } = require('discord.js');
 
 // some variables that are constant
 var defaults = {
@@ -313,7 +313,7 @@ module.exports = {
 				this.fieldsInline = false;
 			}
 			create(){
-				var ret = new Discord.MessageEmbed();
+				var ret = new MessageEmbed();
 				if (this.color !== "")
 				{
 					ret.setColor(this.color);
@@ -362,15 +362,10 @@ module.exports = {
 		}
 		
 
-		const filter = (reaction, user) => {
-			
+		const filter = (reaction, user) => { 
 			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
-		};
-
-		// Defining the embeds. If anyone can find a way to make this simpler/more efficient, it would be super helpful
-
-
-		
+		} 
+			
 		// Sending the starting embed
 
 		StartTroubleshoot();
@@ -390,56 +385,62 @@ module.exports = {
 			}
 			
 			tempStarterEmbed.setFields(tempfields,true);
-			//
+			
 			message.channel.send(
 				
-				tempStarterEmbed.create()
+				{ embeds: [tempStarterEmbed.create()] }
 				).then(async sentMessage => {
-				
 				ReactionLength = defaults.systemsList.length;
 
-				const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
-				
-				var a = ReactionCollector.on('end', (collected, reason) => {
+				const ReactionCollector = sentMessage.createReactionCollector({
+					filter,
+					max : 1,
+					time : 1000 * 60,
+				});
+				ReactionCollector.on('end', (collected, reason,) => {
+					
 					
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					} else if (reason === 'limit') {
-						const userReaction = collected.array()[0];
-						const response = userReaction._emoji.name;
-						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+						
+						collected.forEach( (message) => {
+							const response = message._emoji.name;
+							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+							if (ReactionsStringResponseIndex != -1) {
+								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+								return WhatIsProblem(ReactionsStringResponseIndex);
+							}
+							else {
+								YouBrokeTheBotFunct()
+							}
 
-						if (ReactionsStringResponseIndex != -1) {
-							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-							return WhatIsProblem(ReactionsStringResponseIndex);
-						}
-						else {
-							YouBrokeTheBotFunct()
-						}
+						});
+						/*
+
+						}*/
 					} else if (reason === 'messageDelete') {
 						// Avoiding a crash due to message being deleted
-						const MessageNotFound = new Discord.MessageEmbed()
+						const MessageNotFound = new MessageEmbed()
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
 							.setTimestamp()
-						return message.channel.send(MessageNotFound);
-                    }
-					else
-					{
+						return message.channel.send({ embeds: [MessageNotFound] });
+					} else {
 						// Avoiding a crash due to something not catched
-						const MessageNotFound = new Discord.MessageEmbed()
+						const MessageNotFound = new MessageEmbed()
 						.setColor(defaults.color)
 						.setTitle('Looks like something went wrong!')
 						.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 						.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 						.setTimestamp();
 						
-						return message.channel.send(MessageNotFound);
+						return message.channel.send({ embeds: [MessageNotFound] });
 					}
-					
 				});
+
 				//need to do something with this section. very offputting
 				for (var i = 0; i < defaults.systemsList.length; i++) {
 						
@@ -454,13 +455,13 @@ module.exports = {
 						else
 						{
 							//should be used to handle unexpected errors in the future.
-							const MessageNotFound = new Discord.MessageEmbed()
+							const MessageNotFound = new MessageEmbed()
 							.setColor(defaults.color)
 							.setTitle('Error')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 							.setDescription("Error:"+e)
 							.setTimestamp()
-							message.channel.send(MessageNotFound)
+							message.channel.send({ embeds: [MessageNotFound] })
 						}
 						
 						
@@ -469,6 +470,9 @@ module.exports = {
 				}	
 				
 			});
+
+			
+			
 
 		}
 		function CreateFieldsForSystems(systemIndex)
@@ -616,70 +620,74 @@ module.exports = {
 			problemEmbed.setFields(tempFields)
 			
 			message.channel.send(
-				problemEmbed.create()
+				{ embeds: [problemEmbed.create()] }
 			).then(
 				async sentMessage =>{
 					
-					const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
+					const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
 					ReactionCollector.on('end',(collected, reason) => {
 						if (reason === 'time'){
 							sentMessage.channel.send('Uh oh- you timed out!');
 						}
 						else if (reason === 'limit'){
-							const userReaction = collected.array()[0];
-						
-							const response = userReaction._emoji.name;
+							var objMessage = message
+							collected.forEach( (message) => {
+								const response = message._emoji.name;
+								
+								//get the index of the reaction
+								var issuesIndex = ReactionsStringArr.indexOf(response);
+								
+								//get the associated parts
+								var issueParts = systemObj.fields[issuesIndex].parts;
+								//
+								let finalEmbed = new DCME();
+								var issuePartsText = "";
+								for(var i = 0 ; i < issueParts.length; i++)
+								{
+									var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
+									if ( i == 0 )
+									{
+										issuePartsText += tempIssuesPart;
+									}
+									else if (i >= 1 && i != (issueParts.length -1))
+									{
+										issuePartsText +=", "+tempIssuesPart;
+									}
+									else if (i == (issueParts.length -1))
+									{
+										issuePartsText +=" and "+tempIssuesPart;
+									}
+								}
+								finalEmbed.title = "Check your "+issuePartsText+".";
+								finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+								finalEmbed.desc = SanitizeFinalDesc(issueParts);
+								objMessage.channel.send({ embeds: [finalEmbed.create()] });
+							});
 							
-							//get the index of the reaction
-							var issuesIndex = ReactionsStringArr.indexOf(response);
 							
-							//get the associated parts
-							var issueParts = systemObj.fields[issuesIndex].parts;
 
-							//
-							let finalEmbed = new DCME();
-							var issuePartsText = "";
-							for(var i = 0 ; i < issueParts.length; i++)
-							{
-								var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
-								if ( i == 0 )
-								{
-									issuePartsText += tempIssuesPart;
-								}
-								else if (i >= 1 && i != (issueParts.length -1))
-								{
-									issuePartsText +=", "+tempIssuesPart;
-								}
-								else if (i == (issueParts.length -1))
-								{
-									issuePartsText +=" and "+tempIssuesPart;
-								}
-							}
-							finalEmbed.title = "Check your "+issuePartsText+".";
-							finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-							finalEmbed.desc = SanitizeFinalDesc(issueParts);
-							message.channel.send(finalEmbed.create());
+							
 						}
 						else if (reason === 'messageDeleted'){
 							// Avoiding a crash due to message being deleted
-							const MessageNotFound = new Discord.MessageEmbed()
+							const MessageNotFound = new MessageEmbed()
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
 							.setTimestamp();
-							return message.channel.send(MessageNotFound);
+							return message.channel.send({ embeds: [MessageNotFound] });
 						}
 						else {
 							// Avoiding a crash due to something not catched
-							const MessageNotFound = new Discord.MessageEmbed()
+							const MessageNotFound = new MessageEmbed()
 							.setColor(defaults.color)
 							.setTitle('Looks like something went wrong!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 							.setTimestamp();
 							
-							return message.channel.send(MessageNotFound);
+							return message.channel.send({ embds: [MessageNotFound] });
 						}
 					});
 					for( var i=0 ; i < systemObj.fields.length; i++)
@@ -695,13 +703,13 @@ module.exports = {
 							else
 							{
 								//should be used to handle unexpected errors in the future.
-								const MessageNotFound = new Discord.MessageEmbed()
+								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Error')
 								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
 								.setDescription("Error:"+e)
 								.setTimestamp()
-								message.channel.send(MessageNotFound)
+								message.channel.send({ embeds: [MessageNotFound] })
 							}
 						}	
 					}
@@ -713,13 +721,7 @@ module.exports = {
 
 		function SanitizePartBySystem(part, systemName)
 		{
-			/*
-			if (
-				[parts.battery.name, parts.fuse.name, parts.power.name, parts.trans.name].indexOf(part) != -1 && 
-				[systems.gravity.name, systems.generator.name].indexOf(systemName) != -1
-			)
-				part += "HC "+part;
-			*/
+			
 			if (part === parts.bottle.name)
 			{
 				switch(systemName){
@@ -737,14 +739,14 @@ module.exports = {
 		}
 		async function YouBrokeTheBotFunct() {
 
-			const YouBrokeTheBot = new Discord.MessageEmbed()
+			const YouBrokeTheBot = new MessageEmbed()
 				.setTitle('Great job, you broke the bot!')
 				.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
 				.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) :)')
 				.setTimestamp()
 				.setFooter('Thanks for using the Tin Can Troubleshooter!')
 
-			return message.channel.send(YouBrokeTheBot)
+			return message.channel.send({ embeds: [YouBrokeTheBot] })
 			
 		}
 		function SanitizeFinalDesc (partsArray)
@@ -806,12 +808,8 @@ module.exports = {
 					if(partsArray.indexOf(levelSufficientCrosscheckRef[i]) != -1)
 					{
 						sufficientPartsCounter ++;
-				
-					}
-					
+					}	
 				}
-			
-
 				for (var i =0 ; i < levelSufficientCrosscheckRef.length; i++)
 				{
 					if(partsArray.indexOf(levelSufficientCrosscheckRef[i]) != -1)
