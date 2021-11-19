@@ -4,7 +4,7 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
-var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"];
+var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"]; 
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
 const { MessageEmbed } = require('discord.js');
 
@@ -362,11 +362,10 @@ module.exports = {
 		}
 		
 
-		const filter = (reaction, user) => {
-			
+		const filter = (reaction, user) => { 
 			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
-		};
-
+		} 
+			
 		// Sending the starting embed
 
 		StartTroubleshoot();
@@ -386,28 +385,40 @@ module.exports = {
 			}
 			
 			tempStarterEmbed.setFields(tempfields,true);
-
+			
 			message.channel.send(
 				
 				{ embeds: [tempStarterEmbed.create()] }
 				).then(async sentMessage => {
 				ReactionLength = defaults.systemsList.length;
 
-				const ReactionCollector = sentMessage.createReactionCollector({filter, maxEmojis: 1, time: 60000 });
-				ReactionCollector.on('end', (collected, reason) => {
+				const ReactionCollector = sentMessage.createReactionCollector({
+					filter,
+					max : 1,
+					time : 1000 * 60,
+				});
+				ReactionCollector.on('end', (collected, reason,) => {
+					
+					
 					if (reason === 'time') {
 						sentMessage.channel.send('Uh oh- you timed out!')
 					} else if (reason === 'limit') {
-						const userReaction = collected.array()[0];
-						const response = userReaction._emoji.name;
-						var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
-						if (ReactionsStringResponseIndex != -1) {
-							StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-							return WhatIsProblem(ReactionsStringResponseIndex);
-						}
-						else {
-							YouBrokeTheBotFunct()
-						}
+						
+						collected.forEach( (message) => {
+							const response = message._emoji.name;
+							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+							if (ReactionsStringResponseIndex != -1) {
+								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+								return WhatIsProblem(ReactionsStringResponseIndex);
+							}
+							else {
+								YouBrokeTheBotFunct()
+							}
+
+						});
+						/*
+
+						}*/
 					} else if (reason === 'messageDelete') {
 						// Avoiding a crash due to message being deleted
 						const MessageNotFound = new MessageEmbed()
@@ -459,6 +470,9 @@ module.exports = {
 				}	
 				
 			});
+
+			
+			
 
 		}
 		function CreateFieldsForSystems(systemIndex)
@@ -610,45 +624,49 @@ module.exports = {
 			).then(
 				async sentMessage =>{
 					
-					const ReactionCollector = sentMessage.createReactionCollector(filter, { max: 1, time: 60000 });
+					const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
 					ReactionCollector.on('end',(collected, reason) => {
 						if (reason === 'time'){
 							sentMessage.channel.send('Uh oh- you timed out!');
 						}
 						else if (reason === 'limit'){
-							const userReaction = collected.array()[0];
-						
-							const response = userReaction._emoji.name;
+							var objMessage = message
+							collected.forEach( (message) => {
+								const response = message._emoji.name;
+								
+								//get the index of the reaction
+								var issuesIndex = ReactionsStringArr.indexOf(response);
+								
+								//get the associated parts
+								var issueParts = systemObj.fields[issuesIndex].parts;
+								//
+								let finalEmbed = new DCME();
+								var issuePartsText = "";
+								for(var i = 0 ; i < issueParts.length; i++)
+								{
+									var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
+									if ( i == 0 )
+									{
+										issuePartsText += tempIssuesPart;
+									}
+									else if (i >= 1 && i != (issueParts.length -1))
+									{
+										issuePartsText +=", "+tempIssuesPart;
+									}
+									else if (i == (issueParts.length -1))
+									{
+										issuePartsText +=" and "+tempIssuesPart;
+									}
+								}
+								finalEmbed.title = "Check your "+issuePartsText+".";
+								finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+								finalEmbed.desc = SanitizeFinalDesc(issueParts);
+								objMessage.channel.send({ embeds: [finalEmbed.create()] });
+							});
 							
-							//get the index of the reaction
-							var issuesIndex = ReactionsStringArr.indexOf(response);
 							
-							//get the associated parts
-							var issueParts = systemObj.fields[issuesIndex].parts;
 
-							//
-							let finalEmbed = new DCME();
-							var issuePartsText = "";
-							for(var i = 0 ; i < issueParts.length; i++)
-							{
-								var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
-								if ( i == 0 )
-								{
-									issuePartsText += tempIssuesPart;
-								}
-								else if (i >= 1 && i != (issueParts.length -1))
-								{
-									issuePartsText +=", "+tempIssuesPart;
-								}
-								else if (i == (issueParts.length -1))
-								{
-									issuePartsText +=" and "+tempIssuesPart;
-								}
-							}
-							finalEmbed.title = "Check your "+issuePartsText+".";
-							finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-							finalEmbed.desc = SanitizeFinalDesc(issueParts);
-							message.channel.send({ embeds: [finalEmbed.create()] });
+							
 						}
 						else if (reason === 'messageDeleted'){
 							// Avoiding a crash due to message being deleted
@@ -703,13 +721,7 @@ module.exports = {
 
 		function SanitizePartBySystem(part, systemName)
 		{
-			/*
-			if (
-				[parts.battery.name, parts.fuse.name, parts.power.name, parts.trans.name].indexOf(part) != -1 && 
-				[systems.gravity.name, systems.generator.name].indexOf(systemName) != -1
-			)
-				part += "HC "+part;
-			*/
+			
 			if (part === parts.bottle.name)
 			{
 				switch(systemName){
@@ -796,12 +808,8 @@ module.exports = {
 					if(partsArray.indexOf(levelSufficientCrosscheckRef[i]) != -1)
 					{
 						sufficientPartsCounter ++;
-				
-					}
-					
+					}	
 				}
-			
-
 				for (var i =0 ; i < levelSufficientCrosscheckRef.length; i++)
 				{
 					if(partsArray.indexOf(levelSufficientCrosscheckRef[i]) != -1)

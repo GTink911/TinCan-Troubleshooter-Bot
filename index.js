@@ -5,7 +5,12 @@ const { Client, Intents, Discord, Collection} = require('discord.js');
 const config = require('./config.json');
 
 const myIntents = new Intents();
-myIntents.add(Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES);
+myIntents.add(
+	Intents.FLAGS.GUILDS,
+	Intents.FLAGS.GUILD_MESSAGES,
+	Intents.FLAGS.DIRECT_MESSAGES,
+	Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+	Intents.FLAGS.DIRECT_MESSAGE_REACTIONS);
 
 const client = new Client({ intents: myIntents, partials: ["CHANNEL"] });
 client.commands = new Collection();
