@@ -32,11 +32,16 @@ client.once('ready', () => {
 client.on('messageCreate', async message => {
 
 	// KNOWN ISSUE: Bot will NOT convert command names to lowercase in order to match with below code. All "name" values in command files **must be in lowercase**. If anyone knows how to fix I'd appreciate it. -GTink911
+
+	if (!message.content.startsWith(config.prefix)) return;
 	if (message.author.bot) return;
 
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 	const command = client.commands.get(commandName)
+
+	if (!command) return;
+
 	await command.execute(message, args, client, config, Discord)
 });
 
