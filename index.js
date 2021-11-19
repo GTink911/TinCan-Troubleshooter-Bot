@@ -1,7 +1,5 @@
-// NOTE: This code is ripped from another bot of mine. As such there may be some old/irrelevant stuff, feel free to Pull Request this out.
-
 const fs = require('fs');
-const { Client, Intents, Discord, Collection} = require('discord.js');
+const { Client, Intents, Collection} = require('discord.js');
 const config = require('./config.json');
 
 const myIntents = new Intents();
@@ -15,8 +13,6 @@ myIntents.add(
 const client = new Client({ intents: myIntents, partials: ["CHANNEL"] });
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-
-
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
@@ -42,13 +38,14 @@ client.on('messageCreate', async message => {
 
 	if (!command) return;
 
-	await command.execute(message, args, client, config, Discord)
+	await command.execute(message)
 });
 
 // TODO: fix
 
-client.on("error", (e) => console.error(e));
-client.on("warn", (e) => console.warn(e));
+process.on("error", (e) => console.error(e));
+process.on("warn", (e) => console.warn(e));
+process.on('unhandledRejection', (e) => console.error(e));
 // client.on("debug", (e) => console.info(e));
 
 client.login(config.token);

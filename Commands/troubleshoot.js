@@ -297,7 +297,7 @@ parts.pump.issues = [errors.production];
 module.exports = {
 	name: 'troubleshoot',
 	description: 'Start troublehooting a problem in your Tin Can!',
-	execute(message, args, client, config, Discord) {
+	execute(message) {
 
 		class DCME{
 			constructor()
@@ -448,7 +448,7 @@ module.exports = {
 						await sentMessage.react(ReactionsStringArr[i])
 					}
 					catch (e) {
-						if(e.code === Discord.Constants.APIErrors.UNKNOWN_MESSAGE)
+						if(e.code === 10008)
 						{
 							break;
 						}
@@ -695,13 +695,10 @@ module.exports = {
 						try{
 							await sentMessage.react(ReactionsStringArr[i])
 						}
-						catch(e){
-							if(e.code === Discord.Constants.APIErrors.UNKNOWN_MESSAGE)
-							{
+						catch (e) {
+							if (e.code === 10008) {
 								break;
-							}
-							else
-							{
+							} else {
 								//should be used to handle unexpected errors in the future.
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
