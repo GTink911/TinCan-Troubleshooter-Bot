@@ -38,7 +38,7 @@ client.on('messageCreate', async message => {
 
 	if (!command) return;
 
-	await command.execute(message)
+	await command.execute(message, args)
 });
 
 // TODO: fix

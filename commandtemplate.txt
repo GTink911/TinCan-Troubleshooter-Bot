@@ -1,7 +1,7 @@
 module.exports = {
 	name: 'Name',
 	description: 'Description',
-	async execute(message, args, client, config) {
+	async execute(message) {
 		// ...
 	},
 };
