@@ -37,11 +37,11 @@ client.on('messageCreate', async message => {
 	const command = client.commands.get(commandName)
 
 	if (!command) return;
+	
+	console.log('Command received: ' + commandName);
 
 	await command.execute(message, args)
 });
-
-// TODO: fix
 
 process.on("error", (e) => console.error(e));
 process.on("warn", (e) => console.warn(e));

@@ -36,12 +36,15 @@ module.exports = {
 	name: 'errortranslate',
 	description: 'Translate raw error codes to their readable text.',
 	async execute(message, args) {
+        
+
         // Testing if the error code is invalid (not 4 characters long) or does not exist
         if (!args[0]) return message.channel.send('Please provide an error code.');
-		if (!args[0].length == 4) return message.channel.send('This error code is invalid.');
-        if (!errors[args[0]]) return message.channel.send('This error code is invalid.');
+        const testedarg = args[0].toUpperCase();
+		if (!testedarg.length == 4) return message.channel.send('This error code is invalid.');
+        if (!errors[testedarg]) return message.channel.send('This error code is invalid.');
 
         // Return the translated error code.
-        return message.channel.send(`This error code translates to: \'${errors[args[0]]}\'.`);
+        return message.channel.send(`This error code translates to: \'${errors[testedarg]}\'.`);
 	},
-};
+};  
