@@ -17,8 +17,9 @@ module.exports = {
 			.setTimestamp()
 			.setFooter('Use ![command] to use a command!');
 
-		for (var i = 1; i < CommandsArray.length; i++) {
+		for (var i = 0; i < CommandsArray.length; i++) {
 			const command = commands.get(CommandsArray[i])
+			if (command.hidden) continue; 
 			HelpMessage.addField(`${CommandsArray[i]}`, `${command.description}`, false)
 		}
 
