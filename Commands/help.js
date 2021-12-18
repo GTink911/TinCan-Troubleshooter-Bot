@@ -13,7 +13,7 @@ module.exports = {
 		const HelpMessage = new MessageEmbed()
 			.setColor('#58b9ff')
 			.setTitle('Here\'s a list of all my commands:')
-			.setAuthor('Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/5fYBbRJDYS')
+			.setAuthor('Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/VReSZmzCQz')
 			.setTimestamp()
 			.setFooter('Use ![command] to use a command!');
 

@@ -1,0 +1,18 @@
+{
+  "ScenarioName": "Upload Test",
+  "CreatedDate": "12/14/2021 17:33:52",
+  "CreatedBy": 76561198993937301,
+  "TimeDuration": 10.0,
+  "TimePreparation": 3.0,
+  "DamagePrct": 0,
+  "RemovedPrct": 0,
+  "StockagePrct": 0,
+  "StarshipCompStockPrct": 0,
+  "RemovedSystems": [],
+  "DisabledSystems": [],
+  "DisabledCompomentsInPod": [],
+  "DisabledCompomentsInSystem": [],
+  "EvenementsSettings": [],
+  "ComponentNeeded": [],
+  "NoGeneratedComponent": []
+}

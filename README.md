@@ -10,7 +10,7 @@ It is a very easy process to add the bot to your server - just click [this link]
 There is one essential function: The command '!troubleshoot'. This sends a embed which is pretty self-explanatory on how to use. You can also use !credits for information on who helped out with the making :-)
 
 ## Where do I get help with a issue?
-You can come get help on the [Discord!](https://discord.gg/5fYBbRJDYS)
+You can come get help on the [Discord!](https://discord.gg/VReSZmzCQz)
 
 ## How can I contribute?
 There are two major ways you can contribute:

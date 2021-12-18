@@ -15,7 +15,7 @@ var defaults = {
 		'logo' : 'https://i.imgur.com/3Bvt2DV.png',
 	},
 	'bot': {
-		'discord': 'https://discord.gg/5fYBbRJDYS',
+		'discord': 'https://discord.gg/VReSZmzCQz',
 	},
 	//partNames
 	'parts':{
