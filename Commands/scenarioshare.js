@@ -27,7 +27,8 @@ module.exports = {
 			// For each file in the scenarioFiles array, add a field to the embed with data
 			for (var i = 0; i < scenarioFiles.length; i++) {
 				const scenario = require(`../scenarios/${scenarioFiles[i]}`);
-				listScenarioEmbed.addField(`${scenario.ScenarioName}`, `Created ${scenario.CreatedDate}`, true)
+				const ID = i + 1;
+				listScenarioEmbed.addField(`${scenario.ScenarioName}`, `Created ${scenario.CreatedDate}.\nID: ${ID}`, true)
 			}
 			
 			return message.channel.send( { embeds: [listScenarioEmbed] } );
@@ -70,7 +71,7 @@ module.exports = {
 			});
 
 			console.log(`New scenario uploaded: ${message.attachments.first().name} from ${message.author.tag}`);
-			return message.channel.send('Scenario uploaded! Use !scenarioshare to see it.');
+			return message.channel.send('Scenario uploaded! Use !scenarioshare list to see it.');
 		}
 
 		// Check if the user specified the report command
