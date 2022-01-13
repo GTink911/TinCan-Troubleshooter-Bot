@@ -425,7 +425,7 @@ module.exports = {
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
+							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
 							.setTimestamp()
 						return message.channel.send({ embeds: [MessageNotFound] });
 					} else {
@@ -674,7 +674,7 @@ module.exports = {
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a expection for this bot :)')
+							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
 							.setTimestamp();
 							return message.channel.send({ embeds: [MessageNotFound] });
 						}
