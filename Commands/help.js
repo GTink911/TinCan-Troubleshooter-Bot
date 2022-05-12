@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
-		.setDescription('List all commands or info about a specific command.'),
+		.setDescription('List all commands.'),
 	execute(message) {
 		const { commands } = message.client;
 		let CommandsArray = Array.from(commands.keys());
