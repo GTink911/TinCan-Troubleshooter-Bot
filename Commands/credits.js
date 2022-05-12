@@ -1,10 +1,11 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js');
+
 module.exports = {
-	name: 'credits',
-	description: 'Get details on everyone who helped out!',
+	data: new SlashCommandBuilder()
+		.setName('credits')
+		.setDescription('Get details on everyone who helped out!'),
 	async execute(message) {
-
-		const { MessageEmbed } = require('discord.js');
-
 		const DefaultEmbed = new MessageEmbed()
 			.setColor('#58b9ff')
 			.setTitle('Below is a list of everyone who helped out!')
@@ -17,6 +18,6 @@ module.exports = {
 			)
 			.setTimestamp()
 
-		message.channel.send({ embeds: [DefaultEmbed] })
+		message.reply({ embeds: [DefaultEmbed], ephemeral: true });
 	},
 };

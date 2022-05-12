@@ -1,6 +1,7 @@
 ﻿var StarterResponsePlaintext = 'DEBUG'
 var ReactionsString = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱";
 var ReactionsPlainString = "ABCDEFGHIJKL"
+const { SlashCommandBuilder } = require('@discordjs/builders');
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
@@ -295,8 +296,9 @@ parts.pump.issues = [errors.production];
 
 //add systems parts here
 module.exports = {
-	name: 'troubleshoot',
-	description: 'Start troublehooting a problem in your Tin Can!',
+	data: new SlashCommandBuilder()
+		.setName('troubleshoot')
+		.setDescription('Start troublehooting a problem in your Tin Can!'),
 	execute(message) {
 
 		class DCME{
@@ -361,13 +363,8 @@ module.exports = {
 			}
 		}
 		
-
-		const filter = (reaction, user) => { 
-			return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
-		} 
 			
 		// Sending the starting embed
-
 		StartTroubleshoot();
 
 		function StartTroubleshoot() {
@@ -385,92 +382,183 @@ module.exports = {
 			}
 			
 			tempStarterEmbed.setFields(tempfields,true);
-			
-			message.channel.send(
-				
-				{ embeds: [tempStarterEmbed.create()] }
-				).then(async sentMessage => {
-				ReactionLength = defaults.systemsList.length;
-
-				const ReactionCollector = sentMessage.createReactionCollector({
-					filter,
-					max : 1,
-					time : 1000 * 60,
-				});
-				ReactionCollector.on('end', (collected, reason,) => {
+			if (message.type === 'APPLICATION_COMMAND') {
+				const filter = (reaction, user) => { 
+					return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.user.id;
+				} 
+				message.user.send(
 					
-					
-					if (reason === 'time') {
-						sentMessage.channel.send('Uh oh- you timed out!')
-					} else if (reason === 'limit') {
+					{ embeds: [tempStarterEmbed.create()] }
+					).then(async sentMessage => {
+					ReactionLength = defaults.systemsList.length;
+					if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply('.') }
+					const ReactionCollector = sentMessage.createReactionCollector({
+						filter,
+						max : 1,
+						time : 1000 * 60,
+					});
+					ReactionCollector.on('end', (collected, reason,) => {
 						
-						collected.forEach( (message) => {
-							const response = message._emoji.name;
-							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
-							if (ReactionsStringResponseIndex != -1) {
-								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-								return WhatIsProblem(ReactionsStringResponseIndex);
-							}
-							else {
-								YouBrokeTheBotFunct()
-							}
-
-						});
-						/*
-
-						}*/
-					} else if (reason === 'messageDelete') {
-						// Avoiding a crash due to message being deleted
-						const MessageNotFound = new MessageEmbed()
-							.setColor(defaults.color)
-							.setTitle('Looks like automod deleted something!')
-							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
-							.setTimestamp()
-						return message.channel.send({ embeds: [MessageNotFound] });
-					} else {
-						// Avoiding a crash due to something not catched
-						const MessageNotFound = new MessageEmbed()
-						.setColor(defaults.color)
-						.setTitle('Looks like something went wrong!')
-						.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-						.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
-						.setTimestamp();
 						
-						return message.channel.send({ embeds: [MessageNotFound] });
-					}
-				});
+						if (reason === 'time') {
+							sentMessage.channel.send('Uh oh- you timed out!')
+						} else if (reason === 'limit') {
+							
+							collected.forEach( (message) => {
+								const response = message._emoji.name;
+								var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+								if (ReactionsStringResponseIndex != -1) {
+									StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+									return WhatIsProblem(ReactionsStringResponseIndex);
+								}
+								else {
+									YouBrokeTheBotFunct()
+								}
 
-				//need to do something with this section. very offputting
-				for (var i = 0; i < defaults.systemsList.length; i++) {
-						
-					try {
-						await sentMessage.react(ReactionsStringArr[i])
-					}
-					catch (e) {
-						if(e.code === 10008)
-						{
-							break;
-						}
-						else
-						{
-							//should be used to handle unexpected errors in the future.
+							});
+							/*
+
+							}*/
+						} else if (reason === 'messageDelete') {
+							// Avoiding a crash due to message being deleted
+							const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Looks like automod deleted something!')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
+								.setTimestamp()
+							return message.channel.send({ embeds: [MessageNotFound] });
+						} else {
+							// Avoiding a crash due to something not catched
 							const MessageNotFound = new MessageEmbed()
 							.setColor(defaults.color)
-							.setTitle('Error')
+							.setTitle('Looks like something went wrong!')
 							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-							.setDescription("Error:"+e)
-							.setTimestamp()
-							message.channel.send({ embeds: [MessageNotFound] })
+							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
+							.setTimestamp();
+							
+							return message.channel.send({ embeds: [MessageNotFound] });
 						}
+					});
+
+					//need to do something with this section. very offputting
+					for (var i = 0; i < defaults.systemsList.length; i++) {
+							
+						try {
+							await sentMessage.react(ReactionsStringArr[i])
+						}
+						catch (e) {
+							if(e.code === 10008)
+							{
+								break;
+							}
+							else
+							{
+								//should be used to handle unexpected errors in the future.
+								const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Error')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription("Error:"+e)
+								.setTimestamp()
+								message.channel.send({ embeds: [MessageNotFound] })
+							}
+							
+							
+						}
+
+					}	
+					
+				});
+			} else {
+				const filter = (reaction, user) => { 
+					return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
+				} 
+				message.author.send(
+					
+					{ embeds: [tempStarterEmbed.create()] }
+					).then(async sentMessage => {
+					ReactionLength = defaults.systemsList.length;
+					if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply('.') }
+					const ReactionCollector = sentMessage.createReactionCollector({
+						filter,
+						max : 1,
+						time : 1000 * 60,
+					});
+					ReactionCollector.on('end', (collected, reason,) => {
 						
 						
-					}
+						if (reason === 'time') {
+							sentMessage.channel.send('Uh oh- you timed out!')
+						} else if (reason === 'limit') {
+							
+							collected.forEach( (message) => {
+								const response = message._emoji.name;
+								var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+								if (ReactionsStringResponseIndex != -1) {
+									StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+									return WhatIsProblem(ReactionsStringResponseIndex);
+								}
+								else {
+									YouBrokeTheBotFunct()
+								}
 
-				}	
-				
-			});
+							});
+							/*
 
+							}*/
+						} else if (reason === 'messageDelete') {
+							// Avoiding a crash due to message being deleted
+							const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Looks like automod deleted something!')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
+								.setTimestamp()
+							return message.channel.send({ embeds: [MessageNotFound] });
+						} else {
+							// Avoiding a crash due to something not catched
+							const MessageNotFound = new MessageEmbed()
+							.setColor(defaults.color)
+							.setTitle('Looks like something went wrong!')
+							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
+							.setTimestamp();
+							
+							return message.channel.send({ embeds: [MessageNotFound] });
+						}
+					});
+
+					//need to do something with this section. very offputting
+					for (var i = 0; i < defaults.systemsList.length; i++) {
+							
+						try {
+							await sentMessage.react(ReactionsStringArr[i])
+						}
+						catch (e) {
+							if(e.code === 10008)
+							{
+								break;
+							}
+							else
+							{
+								//should be used to handle unexpected errors in the future.
+								const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Error')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription("Error:"+e)
+								.setTimestamp()
+								message.channel.send({ embeds: [MessageNotFound] })
+							}
+							
+							
+						}
+
+					}	
+					
+				});
+			}
 			
 			
 
@@ -619,100 +707,201 @@ module.exports = {
 			}
 			problemEmbed.setFields(tempFields)
 			
-			message.channel.send(
-				{ embeds: [problemEmbed.create()] }
-			).then(
-				async sentMessage =>{
-					
-					const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
-					ReactionCollector.on('end',(collected, reason) => {
-						if (reason === 'time'){
-							sentMessage.channel.send('Uh oh- you timed out!');
-						}
-						else if (reason === 'limit'){
-							var objMessage = message
-							collected.forEach( (message) => {
-								const response = message._emoji.name;
+			if (message.type === 'APPLICATION_COMMAND'){
+				const filter = (reaction, user) => { 
+					return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.user.id;
+				} 
+				message.channel.send(
+					{ embeds: [problemEmbed.create()] }
+				).then(
+					async sentMessage =>{
+						
+						const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
+						ReactionCollector.on('end',(collected, reason) => {
+							if (reason === 'time'){
+								sentMessage.channel.send('Uh oh- you timed out!');
+							}
+							else if (reason === 'limit'){
+								var objMessage = message
+								collected.forEach( (message) => {
+									const response = message._emoji.name;
+									
+									//get the index of the reaction
+									var issuesIndex = ReactionsStringArr.indexOf(response);
+									
+									//get the associated parts
+									var issueParts = systemObj.fields[issuesIndex].parts;
+									//
+									let finalEmbed = new DCME();
+									var issuePartsText = "";
+									for(var i = 0 ; i < issueParts.length; i++)
+									{
+										var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
+										if ( i == 0 )
+										{
+											issuePartsText += tempIssuesPart;
+										}
+										else if (i >= 1 && i != (issueParts.length -1))
+										{
+											issuePartsText +=", "+tempIssuesPart;
+										}
+										else if (i == (issueParts.length -1))
+										{
+											issuePartsText +=" and "+tempIssuesPart;
+										}
+									}
+									finalEmbed.title = "Check your "+issuePartsText+".";
+									finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+									finalEmbed.desc = SanitizeFinalDesc(issueParts);
+									objMessage.channel.send({ embeds: [finalEmbed.create()] });
+								});
 								
-								//get the index of the reaction
-								var issuesIndex = ReactionsStringArr.indexOf(response);
 								
-								//get the associated parts
-								var issueParts = systemObj.fields[issuesIndex].parts;
-								//
-								let finalEmbed = new DCME();
-								var issuePartsText = "";
-								for(var i = 0 ; i < issueParts.length; i++)
-								{
-									var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
-									if ( i == 0 )
-									{
-										issuePartsText += tempIssuesPart;
-									}
-									else if (i >= 1 && i != (issueParts.length -1))
-									{
-										issuePartsText +=", "+tempIssuesPart;
-									}
-									else if (i == (issueParts.length -1))
-									{
-										issuePartsText +=" and "+tempIssuesPart;
-									}
-								}
-								finalEmbed.title = "Check your "+issuePartsText+".";
-								finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-								finalEmbed.desc = SanitizeFinalDesc(issueParts);
-								objMessage.channel.send({ embeds: [finalEmbed.create()] });
-							});
-							
-							
 
-							
-						}
-						else if (reason === 'messageDeleted'){
-							// Avoiding a crash due to message being deleted
-							const MessageNotFound = new MessageEmbed()
-							.setColor(defaults.color)
-							.setTitle('Looks like automod deleted something!')
-							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
-							.setTimestamp();
-							return message.channel.send({ embeds: [MessageNotFound] });
-						}
-						else {
-							// Avoiding a crash due to something not catched
-							const MessageNotFound = new MessageEmbed()
-							.setColor(defaults.color)
-							.setTitle('Looks like something went wrong!')
-							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
-							.setTimestamp();
-							
-							return message.channel.send({ embds: [MessageNotFound] });
-						}
-					});
-					for( var i=0 ; i < systemObj.fields.length; i++)
-					{
-						try{
-							await sentMessage.react(ReactionsStringArr[i])
-						}
-						catch (e) {
-							if (e.code === 10008) {
-								break;
-							} else {
-								//should be used to handle unexpected errors in the future.
+								
+							}
+							else if (reason === 'messageDeleted'){
+								// Avoiding a crash due to message being deleted
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
-								.setTitle('Error')
+								.setTitle('Looks like automod deleted something!')
 								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
-								.setDescription("Error:"+e)
-								.setTimestamp()
-								message.channel.send({ embeds: [MessageNotFound] })
+								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
+								.setTimestamp();
+								return message.channel.send({ embeds: [MessageNotFound] });
 							}
-						}	
+							else {
+								// Avoiding a crash due to something not catched
+								const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Looks like something went wrong!')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
+								.setTimestamp();
+								
+								return message.channel.send({ embds: [MessageNotFound] });
+							}
+						});
+						for( var i=0 ; i < systemObj.fields.length; i++)
+						{
+							try{
+								await sentMessage.react(ReactionsStringArr[i])
+							}
+							catch (e) {
+								if (e.code === 10008) {
+									break;
+								} else {
+									//should be used to handle unexpected errors in the future.
+									const MessageNotFound = new MessageEmbed()
+									.setColor(defaults.color)
+									.setTitle('Error')
+									.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+									.setDescription("Error:"+e)
+									.setTimestamp()
+									message.channel.send({ embeds: [MessageNotFound] })
+								}
+							}	
+						}
 					}
-				}
-			);
-			
+				);
+			} else {
+				const filter = (reaction, user) => { 
+					return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.author.id;
+				} 
+				message.channel.send(
+					{ embeds: [problemEmbed.create()] }
+				).then(
+					async sentMessage =>{
+						
+						const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
+						ReactionCollector.on('end',(collected, reason) => {
+							if (reason === 'time'){
+								sentMessage.channel.send('Uh oh- you timed out!');
+							}
+							else if (reason === 'limit'){
+								var objMessage = message
+								collected.forEach( (message) => {
+									const response = message._emoji.name;
+									
+									//get the index of the reaction
+									var issuesIndex = ReactionsStringArr.indexOf(response);
+									
+									//get the associated parts
+									var issueParts = systemObj.fields[issuesIndex].parts;
+									//
+									let finalEmbed = new DCME();
+									var issuePartsText = "";
+									for(var i = 0 ; i < issueParts.length; i++)
+									{
+										var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
+										if ( i == 0 )
+										{
+											issuePartsText += tempIssuesPart;
+										}
+										else if (i >= 1 && i != (issueParts.length -1))
+										{
+											issuePartsText +=", "+tempIssuesPart;
+										}
+										else if (i == (issueParts.length -1))
+										{
+											issuePartsText +=" and "+tempIssuesPart;
+										}
+									}
+									finalEmbed.title = "Check your "+issuePartsText+".";
+									finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
+									finalEmbed.desc = SanitizeFinalDesc(issueParts);
+									objMessage.channel.send({ embeds: [finalEmbed.create()] });
+								});
+								
+								
+
+								
+							}
+							else if (reason === 'messageDeleted'){
+								// Avoiding a crash due to message being deleted
+								const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Looks like automod deleted something!')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
+								.setTimestamp();
+								return message.channel.send({ embeds: [MessageNotFound] });
+							}
+							else {
+								// Avoiding a crash due to something not catched
+								const MessageNotFound = new MessageEmbed()
+								.setColor(defaults.color)
+								.setTitle('Looks like something went wrong!')
+								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
+								.setTimestamp();
+								
+								return message.channel.send({ embds: [MessageNotFound] });
+							}
+						});
+						for( var i=0 ; i < systemObj.fields.length; i++)
+						{
+							try{
+								await sentMessage.react(ReactionsStringArr[i])
+							}
+							catch (e) {
+								if (e.code === 10008) {
+									break;
+								} else {
+									//should be used to handle unexpected errors in the future.
+									const MessageNotFound = new MessageEmbed()
+									.setColor(defaults.color)
+									.setTitle('Error')
+									.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+									.setDescription("Error:"+e)
+									.setTimestamp()
+									message.channel.send({ embeds: [MessageNotFound] })
+								}
+							}	
+						}
+					}
+				);
+			}
 			
 		}
 

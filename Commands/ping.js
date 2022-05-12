@@ -1,7 +1,10 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 module.exports = {
-	name: 'ping',
-	description: 'Pong! Checks to make sure the bot is running.',
+	data: new SlashCommandBuilder()
+		.setName('ping')
+		.setDescription('Pong! Checks to make sure the bot is running.'),
 	execute(message) {
-		message.channel.send('Pong!');
+		message.reply({ content: 'Pong!', ephemeral: true});
 	},
 };
