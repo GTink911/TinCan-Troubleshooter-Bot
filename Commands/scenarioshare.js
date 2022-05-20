@@ -11,18 +11,21 @@ module.exports = {
             option.setName('command')
                 .setDescription('The command to execute.')
                 .setRequired(true)
-				.addChoice('list', 'list')
-				.addChoice('download', 'download')
-				.addChoice('upload', 'upload')
-				.addChoice('report', 'report'))
+				.addChoices({ name: 'list', value: 'list' })
+				.addChoices({ name: 'download', value: 'download' })
+				.addChoices({ name: 'upload', value: 'upload' })
+				.addChoices({ name: 'report', value: 'report' }))
 		.addIntegerOption(option =>
 			option.setName('scenarioid')
 				.setDescription('The scenario ID to act on, if any.')
+				.setRequired(false))
+		.addAttachmentOption(option =>
+			option.setName('scenariofile')
+				.setDescription('The scenario to upload, if any.')
 				.setRequired(false)),
 	async execute(message, args) {
 		// Note: fs.readdirSync requires one dot.. I.E. current directory... but require() needs TWO dots for previous directory! The inconsistency is murdering me!
 		const scenarioFiles = fs.readdirSync('./Scenarios').filter(file => file.endsWith('.json'));
-
 		if (!args[0]) return message.reply({ content: 'Please provide a argument. Valid arguments: \'list\', \'download\', \'upload\', \'report\'.\nUsage: /scenarioshare [argument]', ephemeral: true });
 
 		// Check if the user specified the list command
@@ -69,8 +72,7 @@ module.exports = {
 		}
 
 		// Check if the user specified the upload command
-		if(args[0] === 'upload') {
-			if (message.type === 'APPLICATION_COMMAND') return message.reply({ content: 'Currently you need to use !scenarioshare upload to upload new files, rather than slash commands. Sorry!', ephemeral: true });
+		if(args[0] === 'upload' && message.type != 'APPLICATION_COMMAND') {
 			// Check if the user uploaded a scenario
 			if (!message.attachments.first()) return message.reply({ content: 'You need to upload a JSON file!', ephemeral: true })
 
@@ -90,6 +92,26 @@ module.exports = {
 			});
 
 			console.log(`New scenario uploaded: ${message.attachments.first().name} from ${message.author.tag}`);
+			return message.reply({ content: 'Scenario uploaded! Use /scenarioshare list to see it.', ephemeral: true });
+		}
+
+		if(args[0] === 'upload' && message.type === 'APPLICATION_COMMAND') {
+			// Check if the user uploaded a scenario
+			if (!args[1]) return message.reply({ content: 'You need to upload a JSON file!', ephemeral: true })
+
+			// Check that the file extension ends in .json
+			if (!args[1].name.endsWith('.json')) return message.reply({ content: 'Upload Failed - You need to upload a JSON file!', ephemeral: true });
+
+			// Get the scenario file from URL and save it to ./Scenarios
+
+			// If the file already exists, don't overwrite it
+			if (fs.existsSync(`./Scenarios/${args[1].name}`)) return message.reply({ content: 'Upload Failed - That scenario already exists!', ephemeral: true });
+
+			// TODO: Allow the user to overwrite scenarios IF they are the author
+
+			const file = fs.createWriteStream(`./Scenarios/${args[1].name}`);
+
+			console.log(`New scenario uploaded: ${args[1].name} from ${message.user.tag}`);
 			return message.reply({ content: 'Scenario uploaded! Use /scenarioshare list to see it.', ephemeral: true });
 		}
 

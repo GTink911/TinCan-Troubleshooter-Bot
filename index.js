@@ -3,7 +3,6 @@ const { Client, Intents, Collection} = require('discord.js');
 const config = require('./config.json');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { syncBuiltinESMExports } = require('module');
 const commands = [];
 const myIntents = new Intents();
 myIntents.add(
@@ -69,6 +68,7 @@ client.on('interactionCreate', async interaction => {
 	if (interaction.options.getString('code')) args.push(interaction.options.getString('code'))
 	if (interaction.options.getString('command')) args.push(interaction.options.getString('command'))
 	if (interaction.options.getInteger('scenarioid')) args.push(interaction.options.getInteger('scenarioid'))
+	if (interaction.options.getAttachment('scenariofile')) args.push(interaction.options.getAttachment('scenariofile'))
 	// Probably a better way to do this but I just can't be bothered
 
 	if (!command) return;

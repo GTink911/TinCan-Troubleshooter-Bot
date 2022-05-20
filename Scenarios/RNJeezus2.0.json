@@ -1,0 +1,108 @@
+{
+  "ScenarioName": "RNJeezus2.0",
+  "CreatedDate": "05/18/2022 18:40:15",
+  "CreatedBy": 76561197976088506,
+  "TimeDuration": 15.0,
+  "TimePreparation": 1.0,
+  "DamagePrct": 100,
+  "RemovedPrct": 15,
+  "StockagePrct": 20,
+  "StarshipCompStockPrct": 20,
+  "RemovedSystems": [
+    10,
+    6,
+    9
+  ],
+  "DisabledSystems": [],
+  "DisabledCompomentsInPod": [
+    11,
+    25,
+    26,
+    5,
+    13
+  ],
+  "DisabledCompomentsInSystem": [
+    {
+      "SystemTypeTarget": 5,
+      "Component": 19
+    },
+    {
+      "SystemTypeTarget": 5,
+      "Component": 19
+    }
+  ],
+  "EvenementsSettings": [
+    {
+      "Evenement": 3,
+      "StartTime": 3,
+      "Duration": 2,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 5,
+      "StartTime": 5,
+      "Duration": 2,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 8,
+      "Duration": 999999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 10,
+      "Duration": 99999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 12,
+      "Duration": 99999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 14,
+      "Duration": 999999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 16,
+      "Duration": 999999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 18,
+      "Duration": 999999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 20,
+      "Duration": 999999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    },
+    {
+      "Evenement": 1,
+      "StartTime": 22,
+      "Duration": 999999999,
+      "StrikeDelay": 0,
+      "ComponentImpacted": null
+    }
+  ],
+  "ComponentNeeded": [],
+  "NoGeneratedComponent": []
+}
