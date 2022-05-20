@@ -1,2 +1,3 @@
 /.vs
 /config.json
+/Scenarios/*.json
