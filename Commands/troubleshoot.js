@@ -391,7 +391,7 @@ module.exports = {
 					{ embeds: [tempStarterEmbed.create()] }
 					).then(async sentMessage => {
 					ReactionLength = defaults.systemsList.length;
-					if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply('.') }
+					if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply({ content: '.', ephemeral: true }) }
 					const ReactionCollector = sentMessage.createReactionCollector({
 						filter,
 						max : 1,
@@ -479,7 +479,7 @@ module.exports = {
 					{ embeds: [tempStarterEmbed.create()] }
 					).then(async sentMessage => {
 					ReactionLength = defaults.systemsList.length;
-					if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply('.') }
+					if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!' }) } else { message.reply('.') }
 					const ReactionCollector = sentMessage.createReactionCollector({
 						filter,
 						max : 1,
