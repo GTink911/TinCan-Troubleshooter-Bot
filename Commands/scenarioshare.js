@@ -1,7 +1,8 @@
+// @ts-check
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 const https = require('https');
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder, SelectMenuOptionBuilder } = require('@discordjs/builders');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -45,7 +46,7 @@ module.exports = {
 			for (var i = 0; i < scenarioFiles.length; i++) {
 				const scenario = require(`../scenarios/${scenarioFiles[i]}`);
 				const ID = i + 1;
-				listScenarioEmbed.addField(`${scenario.ScenarioName}`, `Created ${scenario.CreatedDate}.\nID: ${ID}`, true)
+				listScenarioEmbed.addField(`${scenario.ScenarioName}`, `Created: ${scenario.CreatedDate}.\nUploaded By: ${scenario.UploadedBy}\nID: ${ID}`, true)
 			}
 			
 			return message.reply( { embeds: [listScenarioEmbed], ephemeral: true } );
@@ -91,6 +92,19 @@ module.exports = {
 				response.pipe(file);
 			});
 
+			// Get file, parse it, and add a field with the uploader's name
+			// This goes too fast and ends up getting undefined, so waiting for it to finish.
+			setTimeout(function temp2(){ temp() }, 1000)
+			function temp(){
+				fs.readFile(`./scenarios/${message.attachments.first().name}`, 'utf-8', function (err, data){
+					let json = JSON.parse(data)
+					json.UploadedBy = message.author.tag
+					fs.writeFile(`./scenarios/${message.attachments.first().name}`, JSON.stringify(json, undefined, 1), function(err) {
+						if (err) return console.log(err);
+					});
+				});
+			}
+
 			console.log(`New scenario uploaded: ${message.attachments.first().name} from ${message.author.tag}`);
 			return message.reply({ content: 'Scenario uploaded! Use /scenarioshare list to see it.', ephemeral: true });
 		}
@@ -110,6 +124,20 @@ module.exports = {
 			// TODO: Allow the user to overwrite scenarios IF they are the author
 
 			const file = fs.createWriteStream(`./Scenarios/${args[1].name}`);
+			https.get(`${args[1].url}`, function(response) {
+				response.pipe(file);
+			});
+
+			setTimeout(function temp4(){ temp3() }, 2000)
+			function temp3() {
+				fs.readFile(`./scenarios/${args[1].name}`, 'utf-8', function (err, data){
+					let json = JSON.parse(data)
+					json.UploadedBy = message.user.tag
+					fs.writeFile(`./scenarios/${args[1].name}`, JSON.stringify(json, undefined, 1), function(err) {
+						if (err) return console.log(err);
+					});
+				});
+			}
 
 			console.log(`New scenario uploaded: ${args[1].name} from ${message.user.tag}`);
 			return message.reply({ content: 'Scenario uploaded! Use /scenarioshare list to see it.', ephemeral: true });
