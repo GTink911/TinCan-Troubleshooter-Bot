@@ -1,3 +1,5 @@
+// @ts-check
+
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 const https = require('https');
@@ -14,7 +16,8 @@ module.exports = {
 				.addChoices({ name: 'list', value: 'list' })
 				.addChoices({ name: 'download', value: 'download' })
 				.addChoices({ name: 'upload', value: 'upload' })
-				.addChoices({ name: 'report', value: 'report' }))
+				.addChoices({ name: 'report', value: 'report' })
+				.addChoices({ name: 'delete', value: 'delete' }))
 		.addIntegerOption(option =>
 			option.setName('scenarioid')
 				.setDescription('The scenario ID to act on, if any.')
@@ -43,7 +46,7 @@ module.exports = {
 			
 			// For each file in the scenarioFiles array, add a field to the embed with data
 			for (var i = 0; i < scenarioFiles.length; i++) {
-				const scenario = require(`../scenarios/${scenarioFiles[i]}`);
+				let scenario = require(`../scenarios/${scenarioFiles[i]}`);
 				const ID = i + 1;
 				listScenarioEmbed.addField(`${scenario.ScenarioName}`, `Created: ${scenario.CreatedDate}.\nUploaded By: ${scenario.UploadedBy}\nID: ${ID}`, true)
 			}
@@ -156,6 +159,29 @@ module.exports = {
 				console.log(`${message.author.tag} reported scenario ${fileToReport} for inappropriate content.`);
 			} catch {
 				console.log(`${message.user.tag} reported scenario ${fileToReport} for inappropriate content.`);
+			}
+		}
+
+		if (args[0] === 'delete') {
+			if (!args[1] || isNaN(args[1])) return message.reply({ content: 'Please specify a scenario to delete.', ephemeral: true })
+			if (!scenarioFiles[args[1] - 1]) return message.reply({ content: 'That scenario file cannot be found.', ephemeral: true })
+			const fileToReport = `${scenarioFiles[args[1] - 1]}`;
+			let file = require(`../Scenarios/${fileToReport}`);
+
+			try {
+				if(message.author.tag === file.UploadedBy) {
+					fs.unlink(`./Scenarios/${fileToReport}`, function (err) {
+						if (err) return console.log(err);
+						return message.reply({ content: 'Scenario deleted.', ephemeral: true })
+					});
+				} else { message.reply({ content: 'You did not upload this file.', ephemeral: true }) }
+			} catch {
+				if(message.user.tag === file.UploadedBy) {
+					fs.unlink(`./Scenarios/${fileToReport}`, function (err) {
+						if (err) return console.log(err);
+						return message.reply({ content: 'Scenario deleted.', ephemeral: true })
+					});
+				} else { message.reply({ content: 'You did not upload this file.', ephemeral: true }) }
 			}
 		}
 	},
