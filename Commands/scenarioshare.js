@@ -1,8 +1,7 @@
-// @ts-check
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 const https = require('https');
-const { SlashCommandBuilder, SelectMenuOptionBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
 	data: new SlashCommandBuilder()
