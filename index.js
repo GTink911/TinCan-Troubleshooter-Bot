@@ -54,7 +54,7 @@ client.on('messageCreate', async message => {
 	if (!command) return;
 	
 	console.log(`Received command ${command.data.name} from ${message.author.tag}.`);
-	message.channel.send('Text commands will be removed in the future. Please use slash commands instead, which can be activated with "/command".');
+	message.channel.send('Text commands will be removed on 5/23/22. Please use slash commands instead, which can be activated with "/command".');
 
 	await command.execute(message, args)
 });
