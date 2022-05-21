@@ -326,7 +326,7 @@ module.exports = {
 				}
 				if (this.author.length !== 0)
 				{
-					ret.setAuthor(this.author[0],this.author[1],this.author[2]);
+					ret.setAuthor({ name: this.author[0], iconURL: this.author[1], URL: this.author[2] });
 				}
 				ret.setDescription (this.desc);
 				
@@ -347,7 +347,7 @@ module.exports = {
 				ret.setTimestamp();
 				if ( this.footer.length >= 1)
 				{
-					ret.setFooter(this.footer[0], this.footer[1]);
+					ret.setFooter({ text: this.footer[0], iconURL: this.footer[1] });
 				}
 				return ret;
 			}
@@ -424,7 +424,7 @@ module.exports = {
 							const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Looks like automod deleted something!')
-								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
 								.setTimestamp()
 							return message.channel.send({ embeds: [MessageNotFound] });
@@ -433,7 +433,7 @@ module.exports = {
 							const MessageNotFound = new MessageEmbed()
 							.setColor(defaults.color)
 							.setTitle('Looks like something went wrong!')
-							.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 							.setTimestamp();
 							
@@ -546,7 +546,7 @@ module.exports = {
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Error')
-								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 								.setDescription("Error:"+e)
 								.setTimestamp()
 								message.channel.send({ embeds: [MessageNotFound] })
@@ -765,7 +765,7 @@ module.exports = {
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Looks like automod deleted something!')
-								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
 								.setTimestamp();
 								return message.channel.send({ embeds: [MessageNotFound] });
@@ -775,7 +775,7 @@ module.exports = {
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Looks like something went wrong!')
-								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 								.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 								.setTimestamp();
 								
@@ -795,7 +795,7 @@ module.exports = {
 									const MessageNotFound = new MessageEmbed()
 									.setColor(defaults.color)
 									.setTitle('Error')
-									.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+									.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 									.setDescription("Error:"+e)
 									.setTimestamp()
 									message.channel.send({ embeds: [MessageNotFound] })
@@ -862,7 +862,7 @@ module.exports = {
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Looks like automod deleted something!')
-								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 								.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
 								.setTimestamp();
 								return message.channel.send({ embeds: [MessageNotFound] });
@@ -872,7 +872,7 @@ module.exports = {
 								const MessageNotFound = new MessageEmbed()
 								.setColor(defaults.color)
 								.setTitle('Looks like something went wrong!')
-								.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 								.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 								.setTimestamp();
 								
@@ -892,7 +892,7 @@ module.exports = {
 									const MessageNotFound = new MessageEmbed()
 									.setColor(defaults.color)
 									.setTitle('Error')
-									.setAuthor('Uh Oh!',`${defaults.tincan.logo}`)
+									.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 									.setDescription("Error:"+e)
 									.setTimestamp()
 									message.channel.send({ embeds: [MessageNotFound] })
@@ -927,10 +927,10 @@ module.exports = {
 
 			const YouBrokeTheBot = new MessageEmbed()
 				.setTitle('Great job, you broke the bot!')
-				.setAuthor('Well this isn\'t good...', '', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+				.setAuthor({ name: 'Well this isn\'t good...', url: 'https://github.com/GTink911/TinCan-Troubleshooter-Bot' })
 				.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) :)')
 				.setTimestamp()
-				.setFooter('Thanks for using the Tin Can Troubleshooter!')
+				.setFooter({ text: 'Thanks for using the Tin Can Troubleshooter!' })
 
 			return message.channel.send({ embeds: [YouBrokeTheBot] })
 			

@@ -1,4 +1,4 @@
-// @ts-check
+
 
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
@@ -37,9 +37,9 @@ module.exports = {
 			const listScenarioEmbed = new MessageEmbed()
 				.setColor('#58b9ff')
 				.setTitle('Here\'s a list of all scenarios I have:')
-				.setAuthor('Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/VReSZmzCQz')
+				.setAuthor({ name: 'Join our Discord!', iconURL: 'https://i.imgur.com/3Bvt2DV.png', url: 'https://discord.gg/VReSZmzCQz' })
 				.setTimestamp()
-				.setFooter('Use /scenarioshare download [scenario ID] to download a scenario, or /scenarioshare upload to upload a scenario!');
+				.setFooter({ text: 'Use /scenarioshare download [scenario ID] to download a scenario, or /scenarioshare upload to upload a scenario!' });
 
 			// Check if there are no scenarios; if so return with a message
 			if (!scenarioFiles.length) return message.reply({ content: 'No scenarios found. Start uploading!', ephemeral: true });

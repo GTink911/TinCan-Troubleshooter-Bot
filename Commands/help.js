@@ -12,9 +12,9 @@ module.exports = {
 		const HelpMessage = new MessageEmbed()
 			.setColor('#58b9ff')
 			.setTitle('Here\'s a list of all my commands:')
-			.setAuthor('Join our Discord!', 'https://i.imgur.com/3Bvt2DV.png', 'https://discord.gg/VReSZmzCQz')
+			.setAuthor({ name: 'Join our Discord!', iconURL: 'https://i.imgur.com/3Bvt2DV.png', url: 'https://discord.gg/VReSZmzCQz' })
 			.setTimestamp()
-			.setFooter('Use /[command] to use a command!');
+			.setFooter({ text: 'Use /[command] to use a command!' });
 
 		for (var i = 0; i < CommandsArray.length; i++) {
 			const command = commands.get(CommandsArray[i])
