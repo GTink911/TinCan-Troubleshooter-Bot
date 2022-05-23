@@ -1,14 +1,49 @@
-
-
+// @ts-check
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 const https = require('https');
 const { SlashCommandBuilder} = require('@discordjs/builders');
 
 module.exports = {
+	aliases: ['list', 'download', 'upload', 'report', 'download'],
 	data: new SlashCommandBuilder()
 		.setName('scenarioshare')
 		.setDescription('Share Tin Can scenarios with others!')
+		/*
+		.addSubcommand(subcommand =>
+			subcommand.setName('list')
+				.setDescription('List all stored scenarios.'))
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('download')
+				.setDescription('Download a scenario.')
+				.addIntegerOption(option =>
+					option.setName('id')
+						.setDescription('The ID of the scenario to download.')
+						.setRequired(true)))
+		.addSubcommand(subcommand =>
+			subcommand
+				.setName('upload')
+				.setDescription('Upload a scenario.')
+				.addAttachmentOption(option =>
+					option.setName('file')
+						.setDescription('The file to upload.')
+						.setRequired(true)))
+		.addSubcommand(subcommand =>
+			subcommand.setName('report')
+				.setDescription('Report a scenario.')
+				.addIntegerOption(option =>
+					option.setName('id')
+						.setDescription('The ID of the scenario to report.')
+						.setRequired(true)))
+		.addSubcommand(subcommand =>
+			subcommand.setName('delete')
+				.setDescription('Delete a scenario.')
+				.addIntegerOption(option =>
+					option.setName('id')
+						.setDescription('The ID of the scenario to delete.')
+						.setRequired(true)))
+		*/
 		.addStringOption(option =>
             option.setName('command')
                 .setDescription('The command to execute.')
