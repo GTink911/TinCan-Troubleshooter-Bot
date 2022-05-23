@@ -1,5 +1,7 @@
 # Tin Can Troubleshooter v1.0.0
 
+## This is the final stable version with Text Commands. It is highly recommended you update to the latest version.
+
 ## About
 Welcome to the Tin Can Troubleshooter GitHub page! The Tin Can Troubleshooter is a open-source tool designed to allow inexperienced players to quickly and easily find what's causing their deadly plight!
 
