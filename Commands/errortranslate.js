@@ -41,16 +41,16 @@ module.exports = {
             option.setName('code')
                 .setDescription('The error code to translate.')
                 .setRequired(true)),
-	execute(message, args) {
+	execute(interaction, args) {
         // Testing if the error code is invalid (not 4 characters long) or does not exist
-        if (!args[0]) return message.reply({ content: 'Please provide an error code.', ephemeral: true });
+        if (!args[0]) return interaction.reply({ content: 'Please provide an error code.', ephemeral: true });
         const testedarg = args[0].toUpperCase();
         // if (!testedarg.length == 4) return ...
         // Above does not work for some reason. Previously it did so idk. Changed to current
-		if (testedarg.length > 4 || testedarg.length < 4) return message.reply({ content: 'This error code is too short.', ephemeral: true });
-        if (!errors[testedarg]) return message.reply({ content: 'This error code does not exist.', ephemeral: true });
+		if (testedarg.length > 4 || testedarg.length < 4) return interaction.reply({ content: 'This error code is too short.', ephemeral: true });
+        if (!errors[testedarg]) return interaction.reply({ content: 'This error code does not exist.', ephemeral: true });
 
         // Return the translated error code.
-        return message.reply({ content: `This error code translates to: \'${errors[testedarg]}\'.`, ephemeral: true });
+        return interaction.reply({ content: `This error code translates to: \'${errors[testedarg]}\'.`, ephemeral: true });
 	},
 };  

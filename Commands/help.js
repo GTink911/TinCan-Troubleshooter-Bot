@@ -5,8 +5,8 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('List all commands.'),
-	execute(message) {
-		const { commands } = message.client;
+	execute(interaction) {
+		const { commands } = interaction.client;
 		let CommandsArray = Array.from(commands.keys());
 
 		const HelpMessage = new MessageEmbed()
@@ -22,6 +22,6 @@ module.exports = {
 			HelpMessage.addField(`${CommandsArray[i]}`, `${command.data.description}`, false)
 		}
 
-		return message.reply({ embeds: [HelpMessage], ephemeral: true });
+		return interaction.reply({ embeds: [HelpMessage], ephemeral: true });
 	},
 };

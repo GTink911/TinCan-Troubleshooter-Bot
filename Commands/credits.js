@@ -5,7 +5,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('credits')
 		.setDescription('Get details on everyone who helped out!'),
-	async execute(message) {
+	async execute(interaction) {
 		const DefaultEmbed = new MessageEmbed()
 			.setColor('#58b9ff')
 			.setTitle('Below is a list of everyone who helped out!')
@@ -18,6 +18,6 @@ module.exports = {
 			)
 			.setTimestamp()
 
-		message.reply({ embeds: [DefaultEmbed], ephemeral: true });
+		interaction.reply({ embeds: [DefaultEmbed], ephemeral: true });
 	},
 };

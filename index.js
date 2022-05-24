@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Client, Intents, Collection} = require('discord.js');
+const { Client, Intents, Collection } = require('discord.js');
 const config = require('./config.json');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -41,22 +41,6 @@ client.once('ready', async () => {
 	
 	console.log(`Online and logged in as ${client.user.tag}!\n`);
 	client.user.setActivity("Online and ready to help you troubleshoot - /troubleshoot :)")
-});
-
-client.on('messageCreate', async message => {
-	if (!message.content.startsWith(config.prefix)) return;
-	if (message.author.bot) return;
-
-	const args = message.content.slice(config.prefix.length).trim().split(/ +/);
-	const commandName = args.shift().toLowerCase();
-	const command = client.commands.get(commandName)
-
-	if (!command) return;
-	
-	console.log(`Received command ${command.data.name} from ${message.author.tag}.`);
-	message.channel.send('Text commands will be removed on 5/23/22. Please use slash commands instead, which can be activated with "/command".');
-
-	await command.execute(message, args)
 });
 
 client.on('interactionCreate', async interaction => {

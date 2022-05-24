@@ -1,7 +1,10 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 module.exports = {
-	name: 'Name',
-	description: 'Description',
-	async execute(message) {
-		// ...
+	data: new SlashCommandBuilder()
+		.setName('name') // Ensure this is not capitalized
+		.setDescription('Descrpition'),
+	execute(interaction) {
+		interaction.reply({ content: 'Pong!', ephemeral: true});
 	},
 };
