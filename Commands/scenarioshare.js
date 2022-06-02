@@ -116,7 +116,7 @@ module.exports = {
 			// Get the scenario file from URL and save it to ./Scenarios
 
 			// If the file already exists, don't overwrite it
-			if (fs.existsSync(`./Scenarios/${args[1].name}`)) return interaction.reply({ content: 'Upload Failed - That scenario already exists!', ephemeral: true });
+			if (fs.existsSync(`./Scenarios/${args[1].name}`)) return interaction.reply({ content: 'Upload Failed - That scenario already exists! If you own this scenario, you can delete it.', ephemeral: true });
 
 			// TODO: Allow the user to overwrite scenarios IF they are the author
 
