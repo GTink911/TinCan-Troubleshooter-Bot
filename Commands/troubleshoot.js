@@ -1,13 +1,12 @@
 ﻿var StarterResponsePlaintext = 'DEBUG'
 var ReactionsString = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱";
 var ReactionsPlainString = "ABCDEFGHIJKL"
-const { SlashCommandBuilder } = require('@discordjs/builders');
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
 var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"]; 
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js');
 
 // some variables that are constant
 var defaults = {
@@ -315,7 +314,7 @@ module.exports = {
 				this.fieldsInline = false;
 			}
 			create(){
-				var ret = new MessageEmbed();
+				var ret = new EmbedBuilder();
 				if (this.color !== "")
 				{
 					ret.setColor(this.color);
@@ -337,7 +336,7 @@ module.exports = {
 					for(var i=0; i< this.fields.length; i++)
 					{
 				
-						ret.addField(this.fields[i], (val_i+(ReactionsPlainStringArr[i].toLocaleLowerCase())+":!"), this.fieldsInline);
+						ret.addFields({ name: this.fields[i], value: (val_i+(ReactionsPlainStringArr[i].toLocaleLowerCase())+":!"), inline: this.fieldsInline });
 					}
 				}
 				if ( this.fields.length >= 1)
@@ -391,7 +390,7 @@ module.exports = {
 				{ embeds: [tempStarterEmbed.create()] }
 				).then(async sentMessage => {
 				ReactionLength = defaults.systemsList.length;
-				if (!message.channel.type == 'dm') { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply({ content: '.', ephemeral: true }) }
+				if (!message.channel.type === ChannelType.DM) { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply({ content: '.', ephemeral: true }) }
 				const ReactionCollector = sentMessage.createReactionCollector({
 					filter,
 					max : 1,
@@ -401,7 +400,7 @@ module.exports = {
 					
 					
 					if (reason === 'time') {
-						sentMessage.channel.send('Uh oh- you timed out!')
+						sentMessage.author.send('Uh oh- you timed out!')
 					} else if (reason === 'limit') {
 						
 						collected.forEach( (message) => {
@@ -421,7 +420,7 @@ module.exports = {
 						}*/
 					} else if (reason === 'messageDelete') {
 						// Avoiding a crash due to message being deleted
-						const MessageNotFound = new MessageEmbed()
+						const MessageNotFound = new EmbedBuilder()
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
@@ -430,7 +429,7 @@ module.exports = {
 						return message.channel.send({ embeds: [MessageNotFound] });
 					} else {
 						// Avoiding a crash due to something not catched
-						const MessageNotFound = new MessageEmbed()
+						const MessageNotFound = new EmbedBuilder()
 						.setColor(defaults.color)
 						.setTitle('Looks like something went wrong!')
 						.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
@@ -455,7 +454,7 @@ module.exports = {
 						else
 						{
 							//should be used to handle unexpected errors in the future.
-							const MessageNotFound = new MessageEmbed()
+							const MessageNotFound = new EmbedBuilder()
 							.setColor(defaults.color)
 							.setTitle('Error')
 							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
@@ -618,7 +617,7 @@ module.exports = {
 			const filter = (reaction, user) => { 
 				return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.user.id;
 			} 
-			message.channel.send(
+			message.user.send(
 				{ embeds: [problemEmbed.create()] }
 			).then(
 				async sentMessage =>{
@@ -626,7 +625,7 @@ module.exports = {
 					const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
 					ReactionCollector.on('end',(collected, reason) => {
 						if (reason === 'time'){
-							sentMessage.channel.send('Uh oh- you timed out!');
+							sentMessage.author.send('Uh oh- you timed out!');
 						}
 						else if (reason === 'limit'){
 							var objMessage = message
@@ -660,7 +659,7 @@ module.exports = {
 								finalEmbed.title = "Check your "+issuePartsText+".";
 								finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
 								finalEmbed.desc = SanitizeFinalDesc(issueParts);
-								objMessage.channel.send({ embeds: [finalEmbed.create()] });
+								objMessage.user.send({ embeds: [finalEmbed.create()] });
 							});
 							
 							
@@ -669,7 +668,7 @@ module.exports = {
 						}
 						else if (reason === 'messageDeleted'){
 							// Avoiding a crash due to message being deleted
-							const MessageNotFound = new MessageEmbed()
+							const MessageNotFound = new EmbedBuilder()
 							.setColor(defaults.color)
 							.setTitle('Looks like automod deleted something!')
 							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
@@ -679,7 +678,7 @@ module.exports = {
 						}
 						else {
 							// Avoiding a crash due to something not catched
-							const MessageNotFound = new MessageEmbed()
+							const MessageNotFound = new EmbedBuilder()
 							.setColor(defaults.color)
 							.setTitle('Looks like something went wrong!')
 							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
@@ -699,7 +698,7 @@ module.exports = {
 								break;
 							} else {
 								//should be used to handle unexpected errors in the future.
-								const MessageNotFound = new MessageEmbed()
+								const MessageNotFound = new EmbedBuilder()
 								.setColor(defaults.color)
 								.setTitle('Error')
 								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
@@ -734,7 +733,7 @@ module.exports = {
 		}
 		async function YouBrokeTheBotFunct() {
 
-			const YouBrokeTheBot = new MessageEmbed()
+			const YouBrokeTheBot = new EmbedBuilder()
 				.setTitle('Great job, you broke the bot!')
 				.setAuthor({ name: 'Well this isn\'t good...', url: 'https://github.com/GTink911/TinCan-Troubleshooter-Bot' })
 				.setDescription('Claim your prize by telling us what happened on [the GitHub!](https://github.com/GTink911/TinCan-Troubleshooter-Bot/issues/new) :)')

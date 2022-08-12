@@ -31,7 +31,7 @@ var errors = {
     '9B2L' : 'Bad_Switch',
     'TY2B' : 'Bad_Filter'
 }
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -41,13 +41,11 @@ module.exports = {
             option.setName('code')
                 .setDescription('The error code to translate.')
                 .setRequired(true)),
-	execute(interaction, args) {
+	execute(interaction) {
         // Testing if the error code is invalid (not 4 characters long) or does not exist
-        if (!args[0]) return interaction.reply({ content: 'Please provide an error code.', ephemeral: true });
-        const testedarg = args[0].toUpperCase();
-        // if (!testedarg.length == 4) return ...
+        const testedarg = interaction.options.getString('code').toUpperCase();
         // Above does not work for some reason. Previously it did so idk. Changed to current
-		if (testedarg.length > 4 || testedarg.length < 4) return interaction.reply({ content: 'This error code is too short.', ephemeral: true });
+		if (testedarg.length > 4 || testedarg.length < 4) return interaction.reply({ content: 'This error code is too short or too long.', ephemeral: true });
         if (!errors[testedarg]) return interaction.reply({ content: 'This error code does not exist.', ephemeral: true });
 
         // Return the translated error code.

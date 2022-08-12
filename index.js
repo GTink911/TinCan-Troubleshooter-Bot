@@ -1,18 +1,19 @@
 const fs = require('fs');
-const { Client, Intents, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Partials, IntentsBitField } = require('discord.js');
 const config = require('./config.json');
 const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const { Routes, InteractionType } = require('discord-api-types/v9');
 const commands = [];
-const myIntents = new Intents();
-myIntents.add(
-	Intents.FLAGS.GUILDS,
-	Intents.FLAGS.GUILD_MESSAGES,
-	Intents.FLAGS.DIRECT_MESSAGES,
-	Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-	Intents.FLAGS.DIRECT_MESSAGE_REACTIONS);
+const myIntents = new IntentsBitField();
+myIntents.add([
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.GuildMessageReactions,
+	GatewayIntentBits.DirectMessageReactions
+]);
 
-const client = new Client({ intents: myIntents, partials: ["CHANNEL"] });
+const client = new Client({ intents: myIntents, partials: [Partials.Channel] });
 client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
@@ -45,21 +46,15 @@ client.once('ready', async () => {
 
 client.on('interactionCreate', async interaction => {
 	if (interaction.user.bot) return;
-	if (!interaction.isCommand()) return;
+	if (!interaction.type === InteractionType.ApplicationCommand) return;
 
 	const command = client.commands.get(interaction.commandName);
-	const args = [];
-	if (interaction.options.getString('code')) args.push(interaction.options.getString('code'))
-	if (interaction.options.getString('command')) args.push(interaction.options.getString('command'))
-	if (interaction.options.getInteger('scenarioid')) args.push(interaction.options.getInteger('scenarioid'))
-	if (interaction.options.getAttachment('scenariofile')) args.push(interaction.options.getAttachment('scenariofile'))
-	// Probably a better way to do this but I just can't be bothered
 
 	if (!command) return;
 
 	console.log(`Received command "${interaction.commandName}" from ${interaction.user.tag}.`);
 
-	await command.execute(interaction, args);
+	await command.execute(interaction);
 });
 
 process.on("error", (e) => console.error(e));
