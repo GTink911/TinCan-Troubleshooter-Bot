@@ -2,8 +2,6 @@
 const fs = require('fs');
 const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js');
 const https = require('https');
-const { InteractionResponseType } = require('discord-api-types/v9');
-const { Channel } = require('diagnostics_channel');
 
 module.exports = {
 	aliases: ['list', 'download', 'upload', 'report', 'download'],
