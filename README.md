@@ -4,7 +4,7 @@
 Welcome to the Tin Can Troubleshooter GitHub page! The Tin Can Troubleshooter is a open-source tool designed to allow inexperienced players to quickly and easily find what's causing their deadly plight!
 
 ## How do I add the bot to my server?
-It is a very easy process to add the bot to your server - just click [this link](https://discord.com/api/oauth2/authorize?client_id=839905525970108486&permissions=8&scope=bot)!
+It is a very easy process to add the bot to your server - just click [this link](https://discord.com/api/oauth2/authorize?client_id=839905525970108486&permissions=8&scope=applications.commands%20bot)!
 
 ## How do I use the bot?
 There is one essential function: The command '/troubleshoot'. This sends a embed which is pretty self-explanatory on how to use. You can also use /help to find various other commands, or /credits for information on who helped out with the making :-)
