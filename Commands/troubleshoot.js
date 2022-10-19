@@ -5,9 +5,8 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 
 //need extra step for the split function to work zzz
 var ReactionsStringArr = ["generator","computer","beacon","scrubber","recycler","light","charger","gravity","oxygen","pressure","repair","temperature"];
-var ErrorsStringArr = ["retriggering", "buzzerNoise", "flickering", "nonsenseData", "lowPower", "blow", "noPower", "trigger", "red", "highPower", "highGrav"]
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
-const { EmbedBuilder, SlashCommandBuilder, ChannelType, ActionRowBuilder, SelectMenuBuilder, ActionRow, ComponentType } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType } = require('discord.js');
 
 // some variables that are constant
 var defaults = {
@@ -364,16 +363,11 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('troubleshoot')
 		.setDescription('Start troublehooting a problem in your Tin Can!'),
-	init(){
-		console.log('init test')
-	},
 	execute(interaction) {			
 		// Sending the starting embed
 		StartTroubleshoot();
 
 		function StartTroubleshoot() {
-			//create starterEmbed here
-			let tempStarterEmbed = new DCME();
 			var tempfields=[];
 			// Add all systems to an array..
 			for(let i = 0; i < defaults.systemsList.length; i++){
@@ -385,15 +379,11 @@ module.exports = {
 					.setPlaceholder('Select a system to troubleshoot!')
 					.addOptions(tempfields)
 			)
-			// Then add that to the constructor
-			tempStarterEmbed.setFields(tempfields, false);
-	
-
+			
 			interaction.reply({ content: 'Hey there! To start troubleshooting, use the dropdown below.', components: [actionRow], ephemeral: true })
 				.then(async sentinteraction => {
 				ReactionLength = defaults.systemsList.length;
 				// Reply to the interaction to direct the user to a DM + resolve the interaction.
-				//if (interaction.channel.type != ChannelType.DM) { interaction.reply({ content: 'Check your DMs!', ephemeral: true }) } else { interaction.reply({ content: '.', ephemeral: true }) }
 				const ReactionCollector = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 10});
 				ReactionCollector.on('collect', () => {
 					// End the collector early and notify that it was because there was a collected item
@@ -404,22 +394,18 @@ module.exports = {
 					if (reason === 'time') {
 						interaction.editReply({ content: 'Uh oh- you timed out!', components: [], ephemeral: true });
 					} else if (reason === 'collected') {
-						//for(i of collected.keys()){
-							//collected.forEach( (collectedEntry) => {
-								for(i of collected.values()){
-									const response = i.values[0];
-									console.log('collected: ' + response);
-									var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
-									if (ReactionsStringResponseIndex != -1) {
-										StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-										return WhatIsProblem(ReactionsStringResponseIndex);
-									}
-									else {
-										YouBrokeTheBotFunct()
-									}
-								}
-							//});
-						//}
+						for(i of collected.values()){
+							const response = i.values[0];
+							console.log('collected: ' + response);
+							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
+							if (ReactionsStringResponseIndex != -1) {
+								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
+								return WhatIsProblem(ReactionsStringResponseIndex);
+							}
+							else {
+								YouBrokeTheBotFunct()
+							}
+						}
 					} else {
 						// Avoiding a crash due to something not catched
 						const interactionNotFound = new EmbedBuilder()
@@ -432,38 +418,8 @@ module.exports = {
 						return interaction.channel.send({ embeds: [interactionNotFound] });
 					}
 				});
-				/*
-				//need to do something with this section. very offputting
-				for (var i = 0; i < defaults.systemsList.length; i++) {
-						
-					try {
-						await sentinteraction.react(ReactionsStringArr[i])
-					}
-					catch (e) {
-						if(e.code === 10008)
-						{
-							break;
-						}
-						else
-						{
-							//should be used to handle unexpected errors in the future.
-							const interactionNotFound = new EmbedBuilder()
-							.setColor(defaults.color)
-							.setTitle('Error')
-							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-							.setDescription("Error:"+e)
-							.setTimestamp()
-							interaction.channel.send({ embeds: [interactionNotFound] })
-						}
-						
-						
-					}
-
-				}	
-				*/
 				
 			});			
-
 		}
 		function CreateFieldsForSystems(systemIndex)
 		{
@@ -658,7 +614,6 @@ module.exports = {
 								console.log("issueParts: " + issueParts);
 								//
 								
-								let finalEmbed = new DCME();
 								var issuePartsText = "";
 								for(var i = 0 ; i < issueParts.length; i++){
 									var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
@@ -675,11 +630,8 @@ module.exports = {
 										issuePartsText +=" and "+tempIssuesPart;
 									}
 								}
-								finalEmbed.title = "Check your "+issuePartsText+".";
-								finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-								finalEmbed.desc = SanitizeFinalDesc(issueParts);
 								console.log("issuePartsText: " + issuePartsText)
-								interaction.editReply({ content:  "Check your " + issuePartsText + "!", components: [], ephemeral: true });
+								interaction.editReply({ content:  "Check your " + issuePartsText + "! If it is blackened, then it may be broken.", components: [], ephemeral: true });
 							}
 						}
 						else if (reason === 'interactionDeleted'){
@@ -704,26 +656,6 @@ module.exports = {
 							return interaction.channel.send({ embds: [interactionNotFound] });
 						}
 					});
-					for( var i=0 ; i < systemObj.fields.length; i++)
-					{
-						try{
-							//await sentinteraction.react(ReactionsStringArr[i])
-						}
-						catch (e) {
-							if (e.code === 10008) {
-								break;
-							} else {
-								//should be used to handle unexpected errors in the future.
-								const interactionNotFound = new EmbedBuilder()
-								.setColor(defaults.color)
-								.setTitle('Error')
-								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-								.setDescription("Error:"+e)
-								.setTimestamp()
-								interaction.channel.send({ embeds: [interactionNotFound] })
-							}
-						}	
-					}
 				}
 			);
 			
