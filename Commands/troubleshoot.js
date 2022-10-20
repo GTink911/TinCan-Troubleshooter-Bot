@@ -6,7 +6,8 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 //need extra step for the split function to work zzz
 var ReactionsStringArr = ["generator","computer","beacon","scrubber","recycler","light","charger","gravity","oxygen","pressure","repair","temperature"];
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
-const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType } = require('discord.js');
+const { ButtonBuilder } = require('@discordjs/builders');
+const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType, ButtonStyle } = require('discord.js');
 
 // some variables that are constant
 var defaults = {
@@ -253,7 +254,17 @@ function GetBlackList(systemsList,except,whiteList=false){
 	return tempArr;
 };
 
-
+const finalActionRow = new ActionRowBuilder()
+	.addComponents(
+		new ButtonBuilder()
+			.setStyle(ButtonStyle.Link)
+			.setURL(defaults.bot.discord)
+			.setLabel('Discord'),
+		new ButtonBuilder()
+			.setStyle(ButtonStyle.Link)
+			.setURL('https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setLabel('GitHub')
+	)
 
 errors.production = {'name':'production','blackList':GetBlackList(
 	defaults.systemsList,
@@ -351,7 +362,7 @@ module.exports = {
 						.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 						.setTimestamp();
 						
-						return interaction.channel.send({ embeds: [interactionNotFound] });
+						return interaction.editReply({ content: "", embeds: [interactionNotFound], components: [finalActionRow], ephemeral: true });
 					}
 				});
 				
@@ -566,21 +577,12 @@ module.exports = {
 										issuePartsText +=" and "+tempIssuesPart;
 									}
 								}
+								let issuePartsDesc = SanitizeFinalDesc(issueParts);
 								console.log("issuePartsText: " + issuePartsText)
-								interaction.editReply({ content:  "Check your " + issuePartsText + "! If it is blackened, then it may be broken.", components: [], ephemeral: true });
+								console.log("issuePartsDesc: " + issuePartsDesc)
+								interaction.editReply({ content:  "Check your " + issuePartsText + "! " + issuePartsDesc, components: [finalActionRow], ephemeral: true });
 							}
-						}
-						else if (reason === 'interactionDeleted'){
-							// Avoiding a crash due to interaction being deleted
-							const interactionNotFound = new EmbedBuilder()
-							.setColor(defaults.color)
-							.setTitle('Looks like automod deleted something!')
-							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
-							.setTimestamp();
-							return interaction.channel.send({ embeds: [interactionNotFound] });
-						}
-						else {
+						} else {
 							// Avoiding a crash due to something not catched
 							const interactionNotFound = new EmbedBuilder()
 							.setColor(defaults.color)
@@ -589,7 +591,7 @@ module.exports = {
 							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 							.setTimestamp();
 							
-							return interaction.channel.send({ embds: [interactionNotFound] });
+							return interaction.editReply({ embds: [interactionNotFound], components: [finalActionRow], ephemeral: true });
 						}
 					});
 				}
@@ -669,7 +671,7 @@ module.exports = {
 			var sufficientPartsCounter = 0;
 			if( isPartBroken)
 			{
-				tempDesc = "If it's black then it's busted. "
+				tempDesc = "If it's black then, it may be damaged. "
 				if (desc != "")
 				{
 					tempDesc = " " + tempDesc;
