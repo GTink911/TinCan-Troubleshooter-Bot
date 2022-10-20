@@ -4,9 +4,10 @@ var ReactionsPlainString = "ABCDEFGHIJKL"
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
-var ReactionsStringArr = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬","🇭","🇮","🇯","🇰","🇱"]; 
+var ReactionsStringArr = ["generator","computer","beacon","scrubber","recycler","light","charger","gravity","oxygen","pressure","repair","temperature"];
 var ReactionsPlainStringArr = ReactionsPlainString.split("");
-const { EmbedBuilder, SlashCommandBuilder, ChannelType } = require('discord.js');
+const { ButtonBuilder } = require('@discordjs/builders');
+const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType, ButtonStyle } = require('discord.js');
 
 // some variables that are constant
 var defaults = {
@@ -35,18 +36,18 @@ var defaults = {
 		'pump' : {'name':'Pump'},
 	},
 	'system' : {
-		'generator': {'name':'Main Generator'},
-		'computer': {'name':'Main Computer'},
-		'beacon': {'name':'Rescue Beacon'},
-		'scrubber': {'name':'CO2 Scrubber'},
-		'recycler': {'name':'CO2 to O2 Station'},
-		'light': {'name':'Lighting Systems'},
-		'charger': {'name':'Fast Battery Charger'},
-		'gravity': {'name':'Gravity Generator'},
-		'oxygen': {'name':'O2 Generator'},
-		'pressure': {'name':'Pressure Stabilizer'},
-		'repair': {'name':'Repair Station'},
-		'temperature': {'name':'Temperature Manager'}
+		'generator': {'name':'Main Generator', 'debugName': 'generator'},
+		'computer': {'name':'Main Computer', 'debugName': 'computer'},
+		'beacon': {'name':'Rescue Beacon', 'debugName': 'beacon'},
+		'scrubber': {'name':'CO2 Scrubber', 'debugName': 'scrubber'},
+		'recycler': {'name':'CO2 to O2 Station', 'debugName': 'recycler'},
+		'light': {'name':'Lighting Systems', 'debugName': 'light'},
+		'charger': {'name':'Fast Battery Charger', 'debugName': 'charger'},
+		'gravity': {'name':'Gravity Generator', 'debugName': 'gravity'},
+		'oxygen': {'name':'O2 Generator', 'debugName': 'oxygen'},
+		'pressure': {'name':'Pressure Stabilizer', 'debugName': 'pressure'},
+		'repair': {'name':'Repair Station', 'debugName': 'repair'},
+		'temperature': {'name':'Temperature Manager', 'debugName': 'temperature'}
 	},
 	'errors':{},
 };
@@ -253,7 +254,17 @@ function GetBlackList(systemsList,except,whiteList=false){
 	return tempArr;
 };
 
-
+const finalActionRow = new ActionRowBuilder()
+	.addComponents(
+		new ButtonBuilder()
+			.setStyle(ButtonStyle.Link)
+			.setURL(defaults.bot.discord)
+			.setLabel('Discord'),
+		new ButtonBuilder()
+			.setStyle(ButtonStyle.Link)
+			.setURL('https://github.com/GTink911/TinCan-Troubleshooter-Bot')
+			.setLabel('GitHub')
+	)
 
 errors.production = {'name':'production','blackList':GetBlackList(
 	defaults.systemsList,
@@ -293,118 +304,46 @@ parts.trans.issues = [errors.red,errors.noPower,errors.highPower];
 parts.proc.issues= [errors.highGrav,errors.highPower];
 parts.pump.issues = [errors.production];
 
+
 //add systems parts here
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('troubleshoot')
 		.setDescription('Start troublehooting a problem in your Tin Can!'),
-	execute(message) {
-
-		class DCME{
-			constructor()
-			{
-				this.color = defaults.color;
-				this.title = "";
-				this.author= [];
-				this.desc="";
-				this.fields=[];
-				this.footer=[];
-				this.defaultColor = true;
-				this.defaultFields = true;
-				this.fieldsInline = false;
-			}
-			create(){
-				var ret = new EmbedBuilder();
-				if (this.color !== "")
-				{
-					ret.setColor(this.color);
-				}
-				if (this.title !== "")
-				{
-					ret.setTitle(this.title);
-				}
-				if (this.author.length !== 0)
-				{
-					ret.setAuthor({ name: this.author[0], iconURL: this.author[1], URL: this.author[2] });
-				}
-				ret.setDescription (this.desc);
-				
-				if(!this.defaultFields)
-				{
-					var val_i = "React with :regional_indicator_";
-
-					for(var i=0; i< this.fields.length; i++)
-					{
-				
-						ret.addFields({ name: this.fields[i], value: (val_i+(ReactionsPlainStringArr[i].toLocaleLowerCase())+":!"), inline: this.fieldsInline });
-					}
-				}
-				if ( this.fields.length >= 1)
-				{
-					//do some looping logic here
-				}
-				ret.setTimestamp();
-				if ( this.footer.length >= 1)
-				{
-					ret.setFooter({ text: this.footer[0], iconURL: this.footer[1] });
-				}
-				return ret;
-			}
-			setColor(color)
-			{
-				this.color = color;
-				this.defaultColor = false;
-			}
-			setFields(fields,inline=false){
-				this.fields = fields;
-				this.defaultFields = false;
-				this.fieldsInline = inline
-			}
-		}
-		
-			
+	execute(interaction) {			
 		// Sending the starting embed
 		StartTroubleshoot();
 
 		function StartTroubleshoot() {
-			//create starterEmbed here
-			let tempStarterEmbed = new DCME();
-			tempStarterEmbed.title="Looks like its time to play another game of... \n***Troubleshooting Mania!***";
-			tempStarterEmbed.author=["Need help with the bot? Join our Discord!", defaults.tincan.logo, defaults.bot.discord];
-			tempStarterEmbed.desc = "Thanks for playing! What system are you having troubles with, my lad/ladess?";
-
 			var tempfields=[];
-			
-			for(var i=0; i<defaults.systemsList.length;i++)
-			{
-				tempfields.push(defaults.systemsList[i].name);
+			// Add all systems to an array..
+			for(let i = 0; i < defaults.systemsList.length; i++){
+				tempfields.push({label: `${defaults.systemsList[i].name}`, description: `Troubleshoot an issue with your ${defaults.systemsList[i].name}.`, value: `${defaults.systemsList[i].debugName}` });
 			}
+			let actionRow = new ActionRowBuilder().addComponents(
+				new SelectMenuBuilder()
+					.setCustomId('selectEmbed1')
+					.setPlaceholder('Select a system to troubleshoot!')
+					.addOptions(tempfields)
+			)
 			
-			tempStarterEmbed.setFields(tempfields,true);
-				
-			const filter = (reaction, user) => { 
-				return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.user.id;
-			} 
-			message.user.send(
-				
-				{ embeds: [tempStarterEmbed.create()] }
-				).then(async sentMessage => {
+			interaction.reply({ content: 'Hey there! To start troubleshooting, use the dropdown below.', components: [actionRow], ephemeral: true })
+				.then(async sentinteraction => {
 				ReactionLength = defaults.systemsList.length;
-				if (message.channel.type != ChannelType.DM) { message.reply({ content: 'Check your DMs!', ephemeral: true }) } else { message.reply({ content: '.', ephemeral: true }) }
-				const ReactionCollector = sentMessage.createReactionCollector({
-					filter,
-					max : 1,
-					time : 1000 * 60,
+				// Reply to the interaction to direct the user to a DM + resolve the interaction.
+				const ReactionCollector = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 60});
+				ReactionCollector.on('collect', () => {
+					// End the collector early and notify that it was because there was a collected item
+					ReactionCollector.stop('collected');
 				});
-				ReactionCollector.on('end', (collected, reason,) => {
-					
-					
+
+				ReactionCollector.on('end', (collected, reason) => {
 					if (reason === 'time') {
-						sentMessage.author.send('Uh oh- you timed out!')
-					} else if (reason === 'limit') {
-						
-						collected.forEach( (message) => {
-							const response = message._emoji.name;
+						interaction.editReply({ content: 'Uh oh- you timed out!', components: [], ephemeral: true });
+					} else if (reason === 'collected') {
+						for(i of collected.values()){
+							const response = i.values[0];
+							console.log('collected: ' + response);
 							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
 							if (ReactionsStringResponseIndex != -1) {
 								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
@@ -413,63 +352,21 @@ module.exports = {
 							else {
 								YouBrokeTheBotFunct()
 							}
-
-						});
-						/*
-
-						}*/
-					} else if (reason === 'messageDelete') {
-						// Avoiding a crash due to message being deleted
-						const MessageNotFound = new EmbedBuilder()
-							.setColor(defaults.color)
-							.setTitle('Looks like automod deleted something!')
-							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
-							.setTimestamp()
-						return message.channel.send({ embeds: [MessageNotFound] });
+						}
 					} else {
 						// Avoiding a crash due to something not catched
-						const MessageNotFound = new EmbedBuilder()
+						const interactionNotFound = new EmbedBuilder()
 						.setColor(defaults.color)
 						.setTitle('Looks like something went wrong!')
 						.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 						.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 						.setTimestamp();
 						
-						return message.channel.send({ embeds: [MessageNotFound] });
+						return interaction.editReply({ content: "", embeds: [interactionNotFound], components: [finalActionRow], ephemeral: true });
 					}
 				});
-
-				//need to do something with this section. very offputting
-				for (var i = 0; i < defaults.systemsList.length; i++) {
-						
-					try {
-						await sentMessage.react(ReactionsStringArr[i])
-					}
-					catch (e) {
-						if(e.code === 10008)
-						{
-							break;
-						}
-						else
-						{
-							//should be used to handle unexpected errors in the future.
-							const MessageNotFound = new EmbedBuilder()
-							.setColor(defaults.color)
-							.setTitle('Error')
-							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-							.setDescription("Error:"+e)
-							.setTimestamp()
-							message.channel.send({ embeds: [MessageNotFound] })
-						}
-						
-						
-					}
-
-				}	
 				
 			});			
-
 		}
 		function CreateFieldsForSystems(systemIndex)
 		{
@@ -521,16 +418,15 @@ module.exports = {
 			if (StarterResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
 			
 			var systemObj = CreateFieldsForSystems(systemIndex);
-			let problemEmbed = new DCME();
-			problemEmbed.title = 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?';
-			problemEmbed.author = ['List incomplete? Let us know on the GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-			problemEmbed.desc = 'What problem are you having with the system?';
 			var tempFields = [];
 			var fieldText;
 			var error;
+			var value;
+			var name;
 			for( var i = 0 ; i < systemObj.fields.length; i++)
 			{
 				fieldText= "";
+				value = "";
 				error = systemObj.fields[i];
 				switch(error.issue)
 				{
@@ -540,27 +436,35 @@ module.exports = {
 						{
 							case systems.generator.name: 
 								fieldText = "Producing Low Power"
+								value = 'generator'
 							break;
 							case systems.scrubber.name:
 								fieldText = "CO2 levels rising"
+								value = 'scrubber'
 							break;
 							case systems.recycler.name:
 								fieldText = "Slow gas recycling"
+								value = 'recycler'
 							break;
 							case systems.charger.name:
 								fieldText = "Slow battery charging"
+								value = 'charging'
 							break;
 							case systems.gravity.name:
 								fieldText = "Unstable gravity uptime"
+								value = 'gravity'
 							break;
 							case systems.oxygen.name:
 								fieldText = "O2 levels dropping"
+								value = 'oxygen'
 							break;
 							case systems.pressure.name:
 								fieldText = "Slow atmospheric stabilization"
+								value = 'pressure'
 							break;
 							case systems.temperature.name:
 								fieldText = "Slow temperature stabilization"
+								value = 'temperature'
 							break;
 						}
 
@@ -572,142 +476,129 @@ module.exports = {
 					*/
 					case errors.retriggering.name:
 						fieldText = "Alarms re-triggering after a few seconds after turning off";	
+						value = 'retriggering'
+						name = 'Alarms re-triggering'
 					break;
 					case errors.buzzerNoise.name: 
 						fieldText = "Unusual buzzer sound pattern";
+						value = 'buzzerNoise'
 					break;
 					case errors.flickering.name: 
 						fieldText = "CRT Monitor flickering"
+						value = 'flickering'
 					break;
 
 					case errors.nonsenseData.name:
 						fieldText= "Displays unstable/unreadable data"
+						value = 'nonsenseData'
 					break;
 					case errors.lowPower.name:
 						fieldText ="Turned on switch has lights but monitor is off";
+						value = 'lowPower'
 						if(error.parts.indexOf(defaults.parts.fan) != -1)
 							fieldText += " and fan spins slow"
 						
 					break;
 					case errors.blow.name: 
-						fieldText ="When turned on, will make a loud sound and switch off immediately";
+						fieldText ="When turned on, makes a loud sound and turns off imnstantly";
+						value = 'blow'
+						name = 'Fuse blowing'
 					break;
 					case errors.noPower.name:
 						fieldText = "When turned on, stays on but no system lights";	
+						value = 'noPower'
 					break;
 					case errors.trigger.name:
 						fieldText = "It's hard to turn the switch to on or to off";	
+						value = 'trigger'
+						name = 'Switch is hard to toggle'
 					break;
 
 					case errors.red.name:
-						fieldText ="The transformer glows red"	
+						fieldText ="The transformer glows red"
+						value = 'red'
 					break;
 					case errors.highPower.name:
 						fieldText = "Producing more than necessary"	
+						value = 'highPower'
 					break;
 					case errors.highGrav.name:
-						fieldText = "The gravity generator is producing higher amounts of gravity"	
+						fieldText = "The gravity generator is producing higher amounts of gravity"
+						value = 'highGrav'
+						name = 'High gravity'
 					break;
 
 				}
-				tempFields.push(fieldText)
+				tempFields.push({fieldText, value, name})
 			}
-			problemEmbed.setFields(tempFields)
-			
-			const filter = (reaction, user) => { 
-				return ReactionsStringArr.includes(reaction.emoji.name) && user.id === message.user.id;
-			} 
-			message.user.send(
-				{ embeds: [problemEmbed.create()] }
-			).then(
-				async sentMessage =>{
-					
-					const ReactionCollector = sentMessage.createReactionCollector({filter, max: 1, time: 1000 * 60 });
-					ReactionCollector.on('end',(collected, reason) => {
+			let tempFields2 = [];
+			for(let i = 0; i < tempFields.length; i++){
+				tempFields2.push({label: tempFields[i].name || tempFields[i].fieldText, description: tempFields[i].fieldText, value: `${tempFields[i].value}`})
+			}
+			let actionRow2 = new ActionRowBuilder().addComponents(
+				new SelectMenuBuilder()
+					.setCustomId('selectEmbed2')
+					.setPlaceholder('Select the issue that you\'re having!')
+					.addOptions(tempFields2)
+			)
+
+			interaction.editReply({ content: 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?', components: [actionRow2], ephemeral: true })
+			.then( async sentinteraction =>{
+					const ReactionCollector2 = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 60});
+					ReactionCollector2.on('collect', () => {
+						ReactionCollector2.stop('collected');
+					});
+					ReactionCollector2.on('end',(collected, reason) => {
 						if (reason === 'time'){
-							sentMessage.author.send('Uh oh- you timed out!');
-						}
-						else if (reason === 'limit'){
-							var objMessage = message
-							collected.forEach( (message) => {
-								const response = message._emoji.name;
-								
+							interaction.editReply({ content: 'Uh oh- you timed out!', components: [], ephemeral: true });
+						} else if (reason === 'collected'){
+							
+							for(i of collected.values()){
+								let trueI = i.values[0]
+								console.log('Collected2: ' + trueI)
 								//get the index of the reaction
-								var issuesIndex = ReactionsStringArr.indexOf(response);
 								
 								//get the associated parts
-								var issueParts = systemObj.fields[issuesIndex].parts;
+								var issueParts;
+								for(let i2 = 0; i2 < systemObj.fields.length; i2++){
+									if(trueI == systemObj.fields[i2].issue) issueParts = systemObj.fields[i2].parts;
+								}
+								console.log("issueParts: " + issueParts);
 								//
-								let finalEmbed = new DCME();
+								
 								var issuePartsText = "";
-								for(var i = 0 ; i < issueParts.length; i++)
-								{
+								for(var i = 0 ; i < issueParts.length; i++){
 									var tempIssuesPart = SanitizePartBySystem(issueParts[i], systemObj.name);
 									if ( i == 0 )
 									{
 										issuePartsText += tempIssuesPart;
 									}
-									else if (i >= 1 && i != (issueParts.length -1))
+									else if (i >= 1 && i != (issueParts.length - 1))
 									{
 										issuePartsText +=", "+tempIssuesPart;
 									}
-									else if (i == (issueParts.length -1))
+									else if (i == (issueParts.length - 1))
 									{
 										issuePartsText +=" and "+tempIssuesPart;
 									}
 								}
-								finalEmbed.title = "Check your "+issuePartsText+".";
-								finalEmbed.author = ['List incomplete? Want to help us improve? Click here to go to our GitHub!', 'https://i.imgur.com/3Bvt2DV.png', 'https://github.com/GTink911/TinCan-Troubleshooter-Bot'];
-								finalEmbed.desc = SanitizeFinalDesc(issueParts);
-								objMessage.user.send({ embeds: [finalEmbed.create()] });
-							});
-							
-							
-
-							
-						}
-						else if (reason === 'messageDeleted'){
-							// Avoiding a crash due to message being deleted
-							const MessageNotFound = new EmbedBuilder()
-							.setColor(defaults.color)
-							.setTitle('Looks like automod deleted something!')
-							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-							.setDescription('Unfortunately, it seems your automod deleted something it shouldn\'t have. Please add a exception for this bot :)')
-							.setTimestamp();
-							return message.channel.send({ embeds: [MessageNotFound] });
-						}
-						else {
+								let issuePartsDesc = SanitizeFinalDesc(issueParts);
+								console.log("issuePartsText: " + issuePartsText)
+								console.log("issuePartsDesc: " + issuePartsDesc)
+								interaction.editReply({ content:  "Check your " + issuePartsText + "! " + issuePartsDesc, components: [finalActionRow], ephemeral: true });
+							}
+						} else {
 							// Avoiding a crash due to something not catched
-							const MessageNotFound = new EmbedBuilder()
+							const interactionNotFound = new EmbedBuilder()
 							.setColor(defaults.color)
 							.setTitle('Looks like something went wrong!')
 							.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
 							.setDescription('Remember, blame Icecloud12 for this specific error. Reason: '+reason)
 							.setTimestamp();
 							
-							return message.channel.send({ embds: [MessageNotFound] });
+							return interaction.editReply({ embds: [interactionNotFound], components: [finalActionRow], ephemeral: true });
 						}
 					});
-					for( var i=0 ; i < systemObj.fields.length; i++)
-					{
-						try{
-							await sentMessage.react(ReactionsStringArr[i])
-						}
-						catch (e) {
-							if (e.code === 10008) {
-								break;
-							} else {
-								//should be used to handle unexpected errors in the future.
-								const MessageNotFound = new EmbedBuilder()
-								.setColor(defaults.color)
-								.setTitle('Error')
-								.setAuthor({ name: 'Uh Oh!', iconURL: `${defaults.tincan.logo}` })
-								.setDescription("Error:"+e)
-								.setTimestamp()
-								message.channel.send({ embeds: [MessageNotFound] })
-							}
-						}	
-					}
 				}
 			);
 			
@@ -740,7 +631,7 @@ module.exports = {
 				.setTimestamp()
 				.setFooter({ text: 'Thanks for using the Tin Can Troubleshooter!' })
 
-			return message.channel.send({ embeds: [YouBrokeTheBot] })
+			return interaction.channel.send({ embeds: [YouBrokeTheBot] })
 			
 		}
 		function SanitizeFinalDesc (partsArray)
@@ -785,7 +676,7 @@ module.exports = {
 			var sufficientPartsCounter = 0;
 			if( isPartBroken)
 			{
-				tempDesc = "If it's black then it's busted. "
+				tempDesc = "If it's black then, it may be damaged. "
 				if (desc != "")
 				{
 					tempDesc = " " + tempDesc;
