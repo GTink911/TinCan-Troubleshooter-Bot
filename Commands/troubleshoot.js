@@ -528,7 +528,7 @@ module.exports = {
 			}
 			let tempFields2 = [];
 			for(let i = 0; i < tempFields.length; i++){
-				tempFields2.push({label: `${tempFields[i].value}`, description: tempFields[i].fieldText, value: `${tempFields[i].value}`})
+				tempFields2.push({label: `${tempFields[i].fieldText}`, description: tempFields[i].fieldText, value: `${tempFields[i].value}`})
 			}
 			let actionRow2 = new ActionRowBuilder().addComponents(
 				new SelectMenuBuilder()
