@@ -331,7 +331,7 @@ module.exports = {
 				.then(async sentinteraction => {
 				ReactionLength = defaults.systemsList.length;
 				// Reply to the interaction to direct the user to a DM + resolve the interaction.
-				const ReactionCollector = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 10});
+				const ReactionCollector = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 60});
 				ReactionCollector.on('collect', () => {
 					// End the collector early and notify that it was because there was a collected item
 					ReactionCollector.stop('collected');
@@ -539,7 +539,7 @@ module.exports = {
 
 			interaction.editReply({ content: 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?', components: [actionRow2], ephemeral: true })
 			.then( async sentinteraction =>{
-					const ReactionCollector2 = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 10});
+					const ReactionCollector2 = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 60});
 					ReactionCollector2.on('collect', () => {
 						ReactionCollector2.stop('collected');
 					});
