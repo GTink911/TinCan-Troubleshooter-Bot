@@ -422,6 +422,7 @@ module.exports = {
 			var fieldText;
 			var error;
 			var value;
+			var name;
 			for( var i = 0 ; i < systemObj.fields.length; i++)
 			{
 				fieldText= "";
@@ -476,6 +477,7 @@ module.exports = {
 					case errors.retriggering.name:
 						fieldText = "Alarms re-triggering after a few seconds after turning off";	
 						value = 'retriggering'
+						name = 'Alarms re-triggering'
 					break;
 					case errors.buzzerNoise.name: 
 						fieldText = "Unusual buzzer sound pattern";
@@ -498,8 +500,9 @@ module.exports = {
 						
 					break;
 					case errors.blow.name: 
-						fieldText ="When turned on, will make a loud sound and switch off immediately";
+						fieldText ="When turned on, makes a loud sound and turns off imnstantly";
 						value = 'blow'
+						name = 'Fuse blowing'
 					break;
 					case errors.noPower.name:
 						fieldText = "When turned on, stays on but no system lights";	
@@ -508,6 +511,7 @@ module.exports = {
 					case errors.trigger.name:
 						fieldText = "It's hard to turn the switch to on or to off";	
 						value = 'trigger'
+						name = 'Switch is hard to toggle'
 					break;
 
 					case errors.red.name:
@@ -521,14 +525,15 @@ module.exports = {
 					case errors.highGrav.name:
 						fieldText = "The gravity generator is producing higher amounts of gravity"
 						value = 'highGrav'
+						name = 'High gravity'
 					break;
 
 				}
-				tempFields.push({fieldText, value})
+				tempFields.push({fieldText, value, name})
 			}
 			let tempFields2 = [];
 			for(let i = 0; i < tempFields.length; i++){
-				tempFields2.push({label: `${tempFields[i].fieldText}`, description: tempFields[i].fieldText, value: `${tempFields[i].value}`})
+				tempFields2.push({label: tempFields[i].name || tempFields[i].fieldText, description: tempFields[i].fieldText, value: `${tempFields[i].value}`})
 			}
 			let actionRow2 = new ActionRowBuilder().addComponents(
 				new SelectMenuBuilder()
