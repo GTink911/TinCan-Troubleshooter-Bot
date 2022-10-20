@@ -1,11 +1,9 @@
 ﻿var StarterResponsePlaintext = 'DEBUG'
-var ReactionsString = "🇦🇧🇨🇩🇪🇫🇬🇭🇮🇯🇰🇱";
 var ReactionsPlainString = "ABCDEFGHIJKL"
 //not really sure if this is worthit
 
 //need extra step for the split function to work zzz
 var ReactionsStringArr = ["generator","computer","beacon","scrubber","recycler","light","charger","gravity","oxygen","pressure","repair","temperature"];
-var ReactionsPlainStringArr = ReactionsPlainString.split("");
 const { ButtonBuilder } = require('@discordjs/builders');
 const { EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType, ButtonStyle } = require('discord.js');
 
@@ -674,7 +672,7 @@ module.exports = {
 			var desc = "";
 			var tempDesc = "";
 			var sufficientPartsCounter = 0;
-			if( isPartBroken)
+			if(isPartBroken)
 			{
 				tempDesc = "If it's black then, it may be damaged. "
 				if (desc != "")
@@ -683,7 +681,7 @@ module.exports = {
 				}
 				desc += tempDesc;
 			}
-			if( isPartLevelSufficient)
+			if(isPartLevelSufficient)
 			{
 				tempDesc = "Check if the ";
 				var sufficientPartsText = "";
