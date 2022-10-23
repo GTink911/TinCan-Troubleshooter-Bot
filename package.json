@@ -1,6 +1,6 @@
 {
   "name": "troubleshooter-bot",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "description": "Tin Can troubleshooter bot",
   "main": "index.js",
   "scripts": {
