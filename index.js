@@ -57,8 +57,8 @@ client.on('interactionCreate', async interaction => {
 	await command.execute(interaction);
 });
 
-process.on("error", (e) => console.error(e));
-process.on("warn", (e) => console.warn(e));
+client.on("error", (e) => console.error(e));
+client.on("warn", (e) => console.warn(e));
 process.on('unhandledRejection', (e) => console.error(e));
 // client.on("debug", (e) => console.info(e));
 

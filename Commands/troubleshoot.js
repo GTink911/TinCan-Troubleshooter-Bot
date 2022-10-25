@@ -328,10 +328,12 @@ module.exports = {
 			interaction.reply({ content: 'Hey there! To start troubleshooting, use the dropdown below.', components: [actionRow], ephemeral: true })
 				.then(async sentinteraction => {
 				ReactionLength = defaults.systemsList.length;
+				let selectinteraction;
 				// Reply to the interaction to direct the user to a DM + resolve the interaction.
 				const ReactionCollector = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 60});
-				ReactionCollector.on('collect', () => {
+				ReactionCollector.on('collect', (i) => {
 					// End the collector early and notify that it was because there was a collected item
+					selectinteraction = i;
 					ReactionCollector.stop('collected');
 				});
 
@@ -341,11 +343,10 @@ module.exports = {
 					} else if (reason === 'collected') {
 						for(i of collected.values()){
 							const response = i.values[0];
-							console.log('collected: ' + response);
 							var ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response)
 							if (ReactionsStringResponseIndex != -1) {
 								StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-								return WhatIsProblem(ReactionsStringResponseIndex);
+								return WhatIsProblem(ReactionsStringResponseIndex, selectinteraction);
 							}
 							else {
 								YouBrokeTheBotFunct()
@@ -411,7 +412,7 @@ module.exports = {
 			return {'name':tempSystem.name,'fields':fieldsList};
 		
 		}
-		function WhatIsProblem(systemIndex) {
+		function WhatIsProblem(systemIndex, selectinteraction) {
 			
 			if (StarterResponsePlaintext === 'DEBUG') YouBrokeTheBotFunct()
 			
@@ -435,34 +436,42 @@ module.exports = {
 							case systems.generator.name: 
 								fieldText = "Producing Low Power"
 								value = 'generator'
+								name = fieldText
 							break;
 							case systems.scrubber.name:
 								fieldText = "CO2 levels rising"
 								value = 'scrubber'
+								name = fieldText
 							break;
 							case systems.recycler.name:
 								fieldText = "Slow gas recycling"
 								value = 'recycler'
+								name = fieldText
 							break;
 							case systems.charger.name:
 								fieldText = "Slow battery charging"
 								value = 'charging'
+								name = fieldText
 							break;
 							case systems.gravity.name:
 								fieldText = "Unstable gravity uptime"
 								value = 'gravity'
+								name = fieldText
 							break;
 							case systems.oxygen.name:
 								fieldText = "O2 levels dropping"
 								value = 'oxygen'
+								name = fieldText
 							break;
 							case systems.pressure.name:
 								fieldText = "Slow atmospheric stabilization"
 								value = 'pressure'
+								name = fieldText
 							break;
 							case systems.temperature.name:
 								fieldText = "Slow temperature stabilization"
 								value = 'temperature'
+								name = fieldText
 							break;
 						}
 
@@ -480,34 +489,39 @@ module.exports = {
 					case errors.buzzerNoise.name: 
 						fieldText = "Unusual buzzer sound pattern";
 						value = 'buzzerNoise'
+						name = fieldText;
 					break;
 					case errors.flickering.name: 
 						fieldText = "CRT Monitor flickering"
 						value = 'flickering'
+						name = fieldText;
 					break;
 
 					case errors.nonsenseData.name:
 						fieldText= "Displays unstable/unreadable data"
 						value = 'nonsenseData'
+						name = fieldText;
 					break;
 					case errors.lowPower.name:
 						fieldText ="Turned on switch has lights but monitor is off";
 						value = 'lowPower'
 						if(error.parts.indexOf(defaults.parts.fan) != -1)
 							fieldText += " and fan spins slow"
+						name = fieldText;
 						
 					break;
 					case errors.blow.name: 
-						fieldText ="When turned on, makes a loud sound and turns off imnstantly";
+						fieldText ="When turned on, makes a loud sound and turns off instantly";
 						value = 'blow'
 						name = 'Fuse blowing'
 					break;
 					case errors.noPower.name:
 						fieldText = "When turned on, stays on but no system lights";	
 						value = 'noPower'
+						name = fieldText;
 					break;
 					case errors.trigger.name:
-						fieldText = "It's hard to turn the switch to on or to off";	
+						fieldText = "It's hard to turn the switch on or off";	
 						value = 'trigger'
 						name = 'Switch is hard to toggle'
 					break;
@@ -515,10 +529,12 @@ module.exports = {
 					case errors.red.name:
 						fieldText ="The transformer glows red"
 						value = 'red'
+						name = fieldText
 					break;
 					case errors.highPower.name:
-						fieldText = "Producing more than necessary"	
+						fieldText = "Producing power more than necessary"	
 						value = 'highPower'
+						name = fieldText
 					break;
 					case errors.highGrav.name:
 						fieldText = "The gravity generator is producing higher amounts of gravity"
@@ -540,10 +556,12 @@ module.exports = {
 					.addOptions(tempFields2)
 			)
 
-			interaction.editReply({ content: 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?', components: [actionRow2], ephemeral: true })
+			selectinteraction.update({ content: 'Got it - now tell me, what\'s your '+ systemObj.name+'\'s issue?', components: [actionRow2], ephemeral: true })
 			.then( async sentinteraction =>{
+					let selectinteraction;
 					const ReactionCollector2 = sentinteraction.createMessageComponentCollector({componentType: ComponentType.SelectMenu, time : 1000 * 60});
-					ReactionCollector2.on('collect', () => {
+					ReactionCollector2.on('collect', (interaction) => {
+						selectinteraction = interaction;
 						ReactionCollector2.stop('collected');
 					});
 					ReactionCollector2.on('end',(collected, reason) => {
@@ -553,7 +571,6 @@ module.exports = {
 							
 							for(i of collected.values()){
 								let trueI = i.values[0]
-								console.log('Collected2: ' + trueI)
 								//get the index of the reaction
 								
 								//get the associated parts
@@ -561,8 +578,6 @@ module.exports = {
 								for(let i2 = 0; i2 < systemObj.fields.length; i2++){
 									if(trueI == systemObj.fields[i2].issue) issueParts = systemObj.fields[i2].parts;
 								}
-								console.log("issueParts: " + issueParts);
-								//
 								
 								var issuePartsText = "";
 								for(var i = 0 ; i < issueParts.length; i++){
@@ -581,9 +596,7 @@ module.exports = {
 									}
 								}
 								let issuePartsDesc = SanitizeFinalDesc(issueParts);
-								console.log("issuePartsText: " + issuePartsText)
-								console.log("issuePartsDesc: " + issuePartsDesc)
-								interaction.editReply({ content:  "Check your " + issuePartsText + "! " + issuePartsDesc, components: [finalActionRow], ephemeral: true });
+								selectinteraction.update({ content:  "Check your " + issuePartsText + "! " + issuePartsDesc, components: [finalActionRow], ephemeral: true });
 							}
 						} else {
 							// Avoiding a crash due to something not catched
@@ -674,7 +687,7 @@ module.exports = {
 			var sufficientPartsCounter = 0;
 			if(isPartBroken)
 			{
-				tempDesc = "If it's black then, it may be damaged. "
+				tempDesc = "If it's black, then it may be damaged. "
 				if (desc != "")
 				{
 					tempDesc = " " + tempDesc;
