@@ -86,7 +86,7 @@ defaults.partsList = [
 	parts.data,
 	parts.fan,
 	parts.fuse,
-	parts.power,,
+	parts.power,
 	parts.switch,
 	parts.trans,
 	parts.proc,
@@ -273,7 +273,7 @@ errors.production = {'name':'production','blackList':GetBlackList(
 		systems.repair.name
 	]
 )};
-/* errors.noHiss = {'name':'noHiss','blackList':[]}; */
+
 errors.retriggering = {'name':'retriggering','blackList':[]};
 errors.buzzerNoise = {'name':'buzzerNoise','blackList':[]};
 errors.flickering = {'name':'flickering','blackList':[systems.repair.name, systems.beacon.name]};
@@ -287,7 +287,7 @@ errors.highPower = {'name':'highPower','blackList':GetBlackList(defaults.systems
 errors.highGrav = {'name':'highGrav','blackList':GetBlackList(defaults.systemsList,[systems.gravity.name],true)};
 
 //initialize part issues here
-parts.filter.issues= [errors.production/*, errors.noHiss */];
+parts.filter.issues= [errors.production];
 parts.alarms.issues= [errors.retriggering];
 parts.battery.issues=[errors.production];
 parts.bottle.issues= [errors.production];
@@ -435,42 +435,42 @@ module.exports = {
 						{
 							case systems.generator.name: 
 								fieldText = "Producing Low Power"
-								value = 'generator'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.scrubber.name:
 								fieldText = "CO2 levels rising"
-								value = 'scrubber'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.recycler.name:
 								fieldText = "Slow gas recycling"
-								value = 'recycler'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.charger.name:
 								fieldText = "Slow battery charging"
-								value = 'charging'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.gravity.name:
 								fieldText = "Unstable gravity uptime"
-								value = 'gravity'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.oxygen.name:
 								fieldText = "O2 levels dropping"
-								value = 'oxygen'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.pressure.name:
 								fieldText = "Slow atmospheric stabilization"
-								value = 'pressure'
+								value = 'production'
 								name = fieldText
 							break;
 							case systems.temperature.name:
 								fieldText = "Slow temperature stabilization"
-								value = 'temperature'
+								value = 'production'
 								name = fieldText
 							break;
 						}
@@ -572,9 +572,9 @@ module.exports = {
 							for(i of collected.values()){
 								let trueI = i.values[0]
 								//get the index of the reaction
-								
+								console.log(trueI);
 								//get the associated parts
-								var issueParts;
+								let issueParts;
 								for(let i2 = 0; i2 < systemObj.fields.length; i2++){
 									if(trueI == systemObj.fields[i2].issue) issueParts = systemObj.fields[i2].parts;
 								}
