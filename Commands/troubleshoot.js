@@ -571,8 +571,6 @@ module.exports = {
 							
 							for(i of collected.values()){
 								let trueI = i.values[0]
-								//get the index of the reaction
-								console.log(trueI);
 								//get the associated parts
 								let issueParts;
 								for(let i2 = 0; i2 < systemObj.fields.length; i2++){
