@@ -4,7 +4,7 @@ const ReactionsPlainString = "ABCDEFGHIJKL"
 
 //need extra step for the split function to work zzz
 const ReactionsStringArr = ["generator","computer","beacon","scrubber","recycler","light","charger","gravity","oxygen","pressure","repair","temperature"];
-import { ButtonBuilder, EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType, ButtonStyle, BaseInteraction } from 'discord.js';
+import { ButtonBuilder, EmbedBuilder, SlashCommandBuilder, ActionRowBuilder, SelectMenuBuilder, ComponentType, ButtonStyle, BaseInteraction, SelectMenuInteraction } from 'discord.js';
 import { defaultsTyping, extendedCommand } from '../Typings/interfaces.js'
 
 // some variables that are constant
@@ -326,11 +326,10 @@ export function execute(interaction: extendedCommand) {
 					// End the collector early and notify that it was because there was a collected item
 					ReactionCollector.stop('collected');
 					const response = interaction.values[0];
-					console.log('collected: ' + response);
 					const ReactionsStringResponseIndex = ReactionsStringArr.indexOf(response);
 					if (ReactionsStringResponseIndex != -1) {
 						StarterResponsePlaintext = ReactionsPlainString[ReactionsStringResponseIndex];
-						return WhatIsProblem(ReactionsStringResponseIndex);
+						return WhatIsProblem(ReactionsStringResponseIndex, interaction);
 					} else {
 						YouBrokeTheBotFunct();
 					}
@@ -387,7 +386,7 @@ export function execute(interaction: extendedCommand) {
 		return { 'name': tempSystem.name, 'fields': fieldsList };
 
 	}
-	function WhatIsProblem(systemIndex: number) {
+	function WhatIsProblem(systemIndex: number, interaction: SelectMenuInteraction) {
 
 		if (StarterResponsePlaintext === 'DEBUG')
 			YouBrokeTheBotFunct();
@@ -401,51 +400,46 @@ export function execute(interaction: extendedCommand) {
 		for (let i = 0; i < systemObj.fields.length; i++) {
 			fieldText = "";
 			value = "";
+			name = "";
 			error = systemObj.fields[i];
 			switch (error.issue) {
 				case errors.production.name:
-
 					switch (systemObj.name) {
 						case systems.generator.name:
 							fieldText = "Producing Low Power";
-							value = 'generator';
+							value = 'production';
 							break;
 						case systems.scrubber.name:
 							fieldText = "CO2 levels rising";
-							value = 'scrubber';
+							value = 'production';
 							break;
 						case systems.recycler.name:
 							fieldText = "Slow gas recycling";
-							value = 'recycler';
+							value = 'production';
 							break;
 						case systems.charger.name:
 							fieldText = "Slow battery charging";
-							value = 'charging';
+							value = 'production';
 							break;
 						case systems.gravity.name:
 							fieldText = "Unstable gravity uptime";
-							value = 'gravity';
+							value = 'production';
 							break;
 						case systems.oxygen.name:
 							fieldText = "O2 levels dropping";
-							value = 'oxygen';
+							value = 'production';
 							break;
 						case systems.pressure.name:
 							fieldText = "Slow atmospheric stabilization";
-							value = 'pressure';
+							value = 'production';
 							break;
 						case systems.temperature.name:
 							fieldText = "Slow temperature stabilization";
-							value = 'temperature';
+							value = 'production';
 							break;
 					}
 
 					break;
-				/*
-				case errors.noHiss.name:
-					fieldText = "No hissing sound";
-				break;
-				*/
 				case errors.retriggering.name:
 					fieldText = "Alarms re-triggering after a few seconds after turning off";
 					value = 'retriggering';
@@ -472,7 +466,7 @@ export function execute(interaction: extendedCommand) {
 
 					break;
 				case errors.blow.name:
-					fieldText = "When turned on, makes a loud sound and turns off imnstantly";
+					fieldText = "When turned on, makes a loud sound and turns off instantly";
 					value = 'blow';
 					name = 'Fuse blowing';
 					break;
@@ -481,7 +475,7 @@ export function execute(interaction: extendedCommand) {
 					value = 'noPower';
 					break;
 				case errors.trigger.name:
-					fieldText = "It's hard to turn the switch to on or to off";
+					fieldText = "It's hard to turn the switch on or off";
 					value = 'trigger';
 					name = 'Switch is hard to toggle';
 					break;
@@ -491,7 +485,7 @@ export function execute(interaction: extendedCommand) {
 					value = 'red';
 					break;
 				case errors.highPower.name:
-					fieldText = "Producing more than necessary";
+					fieldText = "Producing more power than necessary";
 					value = 'highPower';
 					break;
 				case errors.highGrav.name:
@@ -499,8 +493,8 @@ export function execute(interaction: extendedCommand) {
 					value = 'highGrav';
 					name = 'High gravity';
 					break;
-
 			}
+			if(name === "") name = fieldText;
 			tempFields.push({ fieldText, value, name });
 		}
 		const tempFields2 = [];
@@ -514,21 +508,19 @@ export function execute(interaction: extendedCommand) {
 				.addOptions(tempFields2)
 		);
 
-		interaction.editReply({ content: 'Got it - now tell me, what\'s your ' + systemObj.name + '\'s issue?', components: [actionRow2] })
+		interaction.update({ content: 'Got it - now tell me, what\'s your ' + systemObj.name + '\'s issue?', components: [actionRow2] })
 			.then(async (sentinteraction) => {
 				const ReactionCollector2 = sentinteraction.createMessageComponentCollector({ componentType: ComponentType.SelectMenu, time: 1000 * 60 });
 				ReactionCollector2.on('collect', (interaction: BaseInteraction) => {
 					if(!interaction.isSelectMenu()) return;
 					ReactionCollector2.stop('collected');
 					const trueI = interaction.values[0];
-					console.log('Collected2: ' + trueI);
 					//get the index of the reaction
 					//get the associated parts
 					let issueParts: Array<string> = [];
 					for (let i2 = 0; i2 < systemObj.fields.length; i2++) {
 						if (trueI == systemObj.fields[i2].issue) issueParts = systemObj.fields[i2].parts;
 					}
-					console.log("issueParts: " + issueParts);
 					
 					let issuePartsText = "";
 					for (let i = 0; i < issueParts.length; i++) {
@@ -544,9 +536,7 @@ export function execute(interaction: extendedCommand) {
 						}
 					}
 					const issuePartsDesc = SanitizeFinalDesc(issueParts);
-					console.log("issuePartsText: " + issuePartsText);
-					console.log("issuePartsDesc: " + issuePartsDesc);
-					interaction.editReply({ content: "Check your " + issuePartsText + "! " + issuePartsDesc, components: [finalActionRow] });
+					interaction.update({ content: "Check your " + issuePartsText + "! " + issuePartsDesc, components: [finalActionRow] });
 				});
 				ReactionCollector2.on('end', (collected, reason) => {
 					if (reason === 'time') interaction.editReply({ content: 'Uh oh- you timed out!', components: [] });
@@ -622,7 +612,7 @@ export function execute(interaction: extendedCommand) {
 		let tempDesc = "";
 		let sufficientPartsCounter = 0;
 		if (isPartBroken) {
-			tempDesc = "If it's black then, it may be damaged. ";
+			tempDesc = "If it's black, then it may be damaged. ";
 			if (desc != "") {
 				tempDesc = " " + tempDesc;
 			}

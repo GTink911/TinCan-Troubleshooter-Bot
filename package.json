@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node index.js",
     "build": "tsc",
-    "postbuild": "copy config.json dist && copy package*.json dist"
+    "postbuild": "copy config.json dist && copy package*.json dist && copy Default_config.json dist && cd dist && npm ci -omit dev"
   },
   "repository": {
     "type": "git",
