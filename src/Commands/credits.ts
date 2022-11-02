@@ -1,13 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { EmbedBuilder } = require('discord.js');
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { extendedCommand } from "../Typings/interfaces";
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('credits')
 		.setDescription('Get details on everyone who helped out!'),
-	async execute(interaction: ChatInputCommandInteraction) {
+	async execute(interaction: extendedCommand) {
 		const DefaultEmbed = new EmbedBuilder()
 			.setColor('#58b9ff')
 			.setTitle('Below is a list of everyone who helped out!')

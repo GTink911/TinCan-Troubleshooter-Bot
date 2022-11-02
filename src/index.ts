@@ -1,41 +1,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { RESTPostAPIChatInputApplicationCommandsJSONBody, SlashCommandBuilder, REST, Partials, Collection, GatewayIntentBits, Client, BaseInteraction, ChatInputCommandInteraction } from "discord.js";
+import { RESTPostAPIChatInputApplicationCommandsJSONBody, REST, Partials, Collection, GatewayIntentBits, Client, BaseInteraction, Routes } from "discord.js";
 import fs from 'fs';
-
-//const { Client } = require('discord.js');
+import { extendedClient, commandFile, extendedCommand } from './Typings/interfaces'
 const config = require('./config.json');
-const { Routes } = require('discord-api-types/v9');
-interface commandFile {
-	data: SlashCommandBuilder;
-	/**
-	 * The main code for this command.
-	 * 
-	 * @param interaction The interaction
-	 */
-	execute: (interaction: ChatInputCommandInteraction) => void;
-}
-interface extendedClient extends Client {
-	commands: Collection<string, commandFile>;
-}
 const commands: Array<RESTPostAPIChatInputApplicationCommandsJSONBody> = [];
-const myIntents: Array<GatewayIntentBits> = [
-	GatewayIntentBits.Guilds,
-	GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.DirectMessages,
-	GatewayIntentBits.GuildMessageReactions,
-	GatewayIntentBits.DirectMessageReactions
-]
-const partials: Array<Partials> = [
-	Partials.Channel
-]
 function createClient(): extendedClient{
-	const clnt: extendedClient = new Client({ intents: myIntents, partials: partials }) as extendedClient
+	const clnt = new Client({ 
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessageReactions
+		], 
+		partials: [
+			Partials.Channel
+		]}) as extendedClient
 	clnt.commands = new Collection();
 	return(clnt);
 }
 
 const client: extendedClient = createClient();
-const commandFiles: Array<string> = fs.readdirSync('./commands').filter((file: string) => file.endsWith('.js'));
+const commandFiles: Array<string> = fs.readdirSync('./Commands').filter((file: string) => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const command: commandFile = require(`./commands/${file}`);
@@ -44,13 +30,15 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', async () => {
+	if(!fs.existsSync("./Scenarios")) fs.mkdirSync("./Scenarios");
 	// Slash command setup stuff
-	const rest: REST = new REST({ version: '9' }).setToken(config.token);
+	const rest = new REST({ version: '9' }).setToken(config.token);
+	if(!client.isReady()) return;
 
 	try {
 		console.log('Started refreshing application (/) commands...');
 		await rest.put(
-			Routes.applicationCommands(client.user?.id),
+			Routes.applicationCommands(client.user.id),
 			{ body: commands },
 		);
 
@@ -59,8 +47,8 @@ client.once('ready', async () => {
 		console.error(error);
 	}
 	
-	console.log(`Online and logged in as ${client.user?.tag}!\n`);
-	client.user?.setActivity("Online and ready to help you troubleshoot - /troubleshoot :)")
+	console.log(`Online and logged in as ${client.user.tag}!\n`);
+	client.user.setActivity("Online and ready to help you troubleshoot - /troubleshoot :)")
 });
 
 client.on('interactionCreate', async (interaction: BaseInteraction) => {
@@ -73,7 +61,7 @@ client.on('interactionCreate', async (interaction: BaseInteraction) => {
 
 	console.log(`Received command "${interaction.commandName}" from ${interaction.user.tag}.`);
 
-	command.execute(interaction);
+	command.execute(interaction as extendedCommand);
 });
 
 client.on("error", (e) => console.error(e));

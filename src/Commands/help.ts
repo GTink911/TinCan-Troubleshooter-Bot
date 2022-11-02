@@ -1,28 +1,20 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { EmbedBuilder } = require('discord.js');
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { extendedCommand } from "../Typings/interfaces";
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('List all commands.'),
-	execute(interaction: ChatInputCommandInteraction) {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		const commands = interaction.client.commands;
-		const CommandsArray = Array.from(commands.keys());
-
+	execute(interaction: extendedCommand) {
 		const HelpMessage = new EmbedBuilder()
-		.setColor('#58b9ff')
-		.setTitle('Here\'s a list of all my commands:')
-		.setAuthor({ name: 'Join our Discord!', iconURL: 'https://i.imgur.com/3Bvt2DV.png', url: 'https://discord.gg/VReSZmzCQz' })
-		.setTimestamp()
-		.setFooter({ text: 'Use /[command] to use a command!' })
+			.setColor('#58b9ff')
+			.setTitle('Here\'s a list of all my commands:')
+			.setAuthor({ name: 'Join our Discord!', iconURL: 'https://i.imgur.com/3Bvt2DV.png', url: 'https://discord.gg/VReSZmzCQz' })
+			.setTimestamp()
+			.setFooter({ text: 'Use /[command] to use a command!' })
 
-		for (let i = 0; i < CommandsArray.length; i++) {
-			const command = commands.get(CommandsArray[i])
-			if (command.hidden) continue;
-			HelpMessage.addFields({ name: CommandsArray[i], value: command.data.description, inline: false });
+		for (const commandArr of interaction.client.commands) {
+			HelpMessage.addFields({ name: commandArr[0], value: commandArr[1].data.description, inline: false });
 		}
 
 		return interaction.reply({ embeds: [HelpMessage], ephemeral: true });

@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import fs from 'fs';
 import { Attachment, ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder } from 'discord.js';
 import https from 'https';
+import { scenarioFile } from '../Typings/interfaces';
+import { isScenarioFile } from '../Typings/typeguards';
 
 module.exports = {
 	aliases: ['list', 'download', 'upload', 'report', 'download'],
@@ -40,14 +43,13 @@ module.exports = {
 						.setDescription('The ID of the scenario to delete.')
 						.setRequired(true))),
 	async execute(interaction: ChatInputCommandInteraction) {
-		// Note: fs.readdirSync requires one dot.. I.E. current directory... but require() needs TWO dots for previous directory! The inconsistency is murdering me!
 		const scenarioFiles = fs.readdirSync('./Scenarios').filter(file => file.endsWith('.json'));
-		const subCommand: string = interaction.options.getSubcommand();
+		const subCommand = interaction.options.getSubcommand();
 
 		// Check if the user specified the list command
 		if(subCommand === 'list') {
 			// Basic embed
-			const listScenarioEmbed: EmbedBuilder = new EmbedBuilder()
+			const listScenarioEmbed = new EmbedBuilder()
 				.setColor('#58b9ff')
 				.setTitle('Here\'s a list of all scenarios I have:')
 				.setAuthor({ name: 'Join our Discord!', iconURL: 'https://i.imgur.com/3Bvt2DV.png', url: 'https://discord.gg/VReSZmzCQz' })
@@ -55,7 +57,7 @@ module.exports = {
 				.setFooter({ text: 'Use /scenarioshare download [scenario ID] to download a scenario, or /scenarioshare upload to upload a scenario!' });
 
 			// Check if there are no scenarios; if so return with a message
-			if (!scenarioFiles.length) return interaction.reply({ content: 'No scenarios found. Start uploading!', ephemeral: true });
+			if (scenarioFiles.length === 0) return interaction.reply({ content: 'No scenarios found. Start uploading!', ephemeral: true });
 			
 			// For each file in the scenarioFiles array, add a field to the embed with data
 			for (let i = 0; i < scenarioFiles.length; i++) {
@@ -70,7 +72,7 @@ module.exports = {
 		// Check if the user specified the download command
 		if(subCommand === 'download') {
 			// We can override this number | null since ID is required
-			const scenarioID: number = interaction.options.getInteger('id') as number;
+			const scenarioID = interaction.options.getInteger('id') as number;
 
 			// Check if the scenario ID is valid
 			if (scenarioID > scenarioFiles.length || scenarioID < 1) return interaction.reply({ content: 'That scenario ID is invalid! Use /scenarioshare list to see a list of scenarios.', ephemeral: true });
@@ -85,18 +87,22 @@ module.exports = {
 		// Check if the user specified the upload command
 		if(subCommand === 'upload') {
 			// We can override this Attachment | null since file is required
-			const uploadedFile: Attachment = interaction.options.getAttachment('file') as Attachment;
+			const uploadedFile = interaction.options.getAttachment('file') as Attachment;
+
+			// Defer because the upload might take a while
+			interaction.deferReply({ ephemeral: true });
 
 			// Check that the file extension ends in .json
 			if (!uploadedFile.name || !uploadedFile.name.endsWith('.json')) return interaction.reply({ content: 'Upload Failed - You need to upload a JSON file!', ephemeral: true });
 
-			// Get the scenario file from URL and save it to ./Scenarios
+			// Check the scenario is valid
+			if(!isScenarioFile(uploadedFile)) return interaction.reply({ content: "This scenario is not valid!", ephemeral: true })
 
 			// If the file already exists, don't overwrite it
 			if (fs.existsSync(`./Scenarios/${uploadedFile.name}`)) return interaction.reply({ content: 'Upload Failed - That scenario already exists! If you own this scenario, you can delete it.', ephemeral: true });
 
 			// TODO: Allow the user to overwrite scenarios IF they are the author
-
+			// Get the scenario file from URL and save it to ./Scenarios
 			const file = fs.createWriteStream(`./Scenarios/${uploadedFile.name}`);
 			https.get(`${uploadedFile.url}`, function(response) {
 				response.pipe(file);
@@ -105,7 +111,7 @@ module.exports = {
 			// Waiting because going too fast results in the file being seen and saved as empty
 			await new Promise(resolve => setTimeout(resolve, 2000));
 			fs.readFile(`./scenarios/${uploadedFile.name}`, 'utf-8', function (err, data){
-				const json = JSON.parse(data)
+				const json: scenarioFile = JSON.parse(data);
 				json.UploadedBy = interaction.user.tag
 				fs.writeFile(`./scenarios/${uploadedFile.name}`, JSON.stringify(json, undefined, 1), function(err) {
 					if (err) return console.log(err);
@@ -119,7 +125,7 @@ module.exports = {
 		// Check if the user specified the report command
 		if(subCommand === 'report') {
 			// We can override this number | null since ID is required
-			const scenarioID: number = interaction.options.getInteger('id') as number;
+			const scenarioID = interaction.options.getInteger('id') as number;
 			if (!scenarioFiles[scenarioID - 1]) return interaction.reply({ content: 'That scenario file cannot be found.', ephemeral: true })
 
 			// Get the scenario file
@@ -130,16 +136,11 @@ module.exports = {
 
 		if (subCommand === 'delete') {
 			// We can override this number | null since ID is required
-			const scenarioID: number = interaction.options.getInteger('id') as number;
+			const scenarioID = interaction.options.getInteger('id') as number;
 			if (!scenarioFiles[scenarioID - 1]) return interaction.reply({ content: 'That scenario file cannot be found.', ephemeral: true })
 			const fileToReport = `${scenarioFiles[scenarioID - 1]}`;
-			let file;
-			try {
-				file = require(`../Scenarios/${fileToReport}`);
-			} catch {
-				file = undefined;
-			}
-			if(interaction.user.tag === file?.UploadedBy || !file?.UploadedBy || !file) {
+			const file: scenarioFile = require(`../Scenarios/${fileToReport}`);
+			if(interaction.user.tag === file.UploadedBy || !file.UploadedBy) {
 				fs.unlink(`./Scenarios/${fileToReport}`, function (err) {
 					if (err) return console.log(err);
 					console.log(`Scenario deleted: ${fileToReport} by ${interaction.user.tag}`);
