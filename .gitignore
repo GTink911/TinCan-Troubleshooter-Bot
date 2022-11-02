@@ -2,3 +2,4 @@
 /config.json
 /src/Scenarios/*.json
 /dist
+/node_modules
