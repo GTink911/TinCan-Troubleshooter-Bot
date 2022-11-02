@@ -4,7 +4,9 @@
   "description": "Tin Can troubleshooter bot",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "test": "node index.js",
+    "build": "tsc",
+    "postbuild": "copy config.json dist && copy package*.json dist && copy Default_config.json dist && cd dist && npm ci -omit dev"
   },
   "repository": {
     "type": "git",
@@ -14,5 +16,10 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.2.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "eslint": "^8.26.0"
   }
 }
