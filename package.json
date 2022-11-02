@@ -4,9 +4,11 @@
   "description": "Tin Can troubleshooter bot",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js",
+    "install": "npm ci -omit dev",
     "build": "tsc",
-    "postbuild": "copy config.json dist && copy package*.json dist && copy Default_config.json dist && cd dist && npm ci -omit dev"
+    "postbuild": "copy config.json dist && copy package*.json dist && cd dist && npm ci -omit dev",
+    "predistbuild": "tsc",
+    "distbuild": "ren dist \"Troubleshoot Bot\" && copy Default_config.json \"Troubleshoot Bot\" && copy package*.json \"Troubleshoot Bot\" && cd \"Troubleshoot Bot\" && ren Default_config.json config.json"
   },
   "repository": {
     "type": "git",
